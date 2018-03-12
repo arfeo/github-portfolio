@@ -11,6 +11,7 @@ const globals = {
 		
 	],
 
+	// Page blocks to be disabled
 	disabled: {
 		'author': false,
 		'bio': false,
@@ -19,6 +20,7 @@ const globals = {
 		'copyright': false,
 	},
 
+	// Items quantity each page returns
 	limit: {
 		'repos': 100,
 		'starred': 100,
