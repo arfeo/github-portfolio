@@ -287,9 +287,21 @@ window.onload = async () => {
 	// .. Render author block
 	if (!globals.disabled.author) {
 
-		// Render root container
 		const authorContainer = document.createElement('div')
 		authorContainer.className = 'author'
+		authorContainer.innerHTML = (`
+			<div class="author__avatar-dock">
+				<img src="${githubAuthor.avatar_url}" class="author__avatar" alt="" />
+			</div>
+			<div class="author__info-dock">
+				<div class="author__name">
+					${githubAuthor.name}
+				</div>
+				<div class="author__url">
+					<a href="${githubAuthor.html_url}">${githubAuthor.html_url}</a>
+				</div>
+			</div>
+		`)
 		rootContainer.appendChild(authorContainer)
 
 		// Set page title
@@ -298,65 +310,26 @@ window.onload = async () => {
 
 		document.body.style.paddingTop = '180px'
 
-		// Render author avatar dock
-		const authorAvatarDock = document.createElement('div')
-		authorAvatarDock.className = 'author__avatar-dock'
-		authorContainer.appendChild(authorAvatarDock)
-
-		// Set avatar
-		const authorAvatar = document.createElement('img')
-		authorAvatar.src = githubAuthor.avatar_url
-		authorAvatar.className = 'author__avatar'
-		authorAvatarDock.appendChild(authorAvatar)
-
-		// Render author info dock
-		const authorInfoDock = document.createElement('div')
-		authorInfoDock.className = 'author__info-dock'
-		authorContainer.appendChild(authorInfoDock)
-
-		// Set author name
-		const authorName = document.createElement('div')
-		authorName.className = 'author__name'
-		authorName.innerHTML = githubAuthor.name
-		authorInfoDock.appendChild(authorName)
-		
-		// Set author GitHub url
-		const authorUrl = document.createElement('div')
-		authorUrl.className = 'author__url'
-		authorUrl.innerHTML = `<a href="${githubAuthor.html_url}">${githubAuthor.html_url}</a>`
-		authorInfoDock.appendChild(authorUrl)
-
 	}
 
 	// .. Render bio block
 	if (!globals.disabled.bio) {
 
-		// Render root container
 		const bioContainer = document.createElement('div')
 		bioContainer.className = 'bio'
+		bioContainer.innerHTML = (`
+			<div class="bio__dock">
+				${githubAuthor.bio ? githubAuthor.bio : 'Bio is empty.'}
+			</div>
+		`)
 		rootContainer.appendChild(bioContainer)
-
-		// Render bio text dock
-		const bioTextDock = document.createElement('div')
-		bioTextDock.className = 'bio__dock'
-		bioContainer.appendChild(bioTextDock)
-
-		if (githubAuthor.bio) {
-
-			bioTextDock.innerHTML = githubAuthor.bio
-
-		} else {
-
-			bioTextDock.innerHTML = 'Bio is empty.'
-
-		}
 
 	}
 
 	// .. Render repos list
 	if (!globals.disabled.projects) {
 
-		// Render root container
+		// Render block container
 		const projectsContainer = document.createElement('div')
 		projectsContainer.className = 'projects'
 		rootContainer.appendChild(projectsContainer)
@@ -389,13 +362,12 @@ window.onload = async () => {
 					// Render repo info container
 					const repoInfo = document.createElement('div')
 					repoInfo.className = 'projects__info'
+					repoInfo.innerHTML = (`
+						<div class="projects__info-name">
+							<a href="${url}">${name}</a>
+						</div>
+					`)
 					reposDock.appendChild(repoInfo)
-
-					// Repo name
-					const repoName = document.createElement('div')
-					repoName.className = 'projects__info-name'
-					repoName.innerHTML = `<a href="${url}">${name}</a>`
-					repoInfo.appendChild(repoName)
 
 					if (description) {
 
@@ -409,22 +381,16 @@ window.onload = async () => {
 
 					if (language) {
 
-						// Render repo language container
+						// Repo language
 						const repoLanguage = document.createElement('div')
 						repoLanguage.className = 'projects__info-language'
+						repoLanguage.innerHTML = (`
+							<div class="projects__info-language-icon" style="background-color:${globals.colors[language]}"></div>
+							<div class="projects__info-language-name">
+								${language}
+							</div>
+						`)
 						repoInfo.appendChild(repoLanguage)
-
-						// Repo language icon
-						const repoLangIcon = document.createElement('div')
-						repoLangIcon.className = 'projects__info-language-icon'
-						repoLangIcon.style.backgroundColor = globals.colors[language]
-						repoLanguage.appendChild(repoLangIcon)
-
-						// Repo language name
-						const repoLangName = document.createElement('div')
-						repoLangName.className = 'projects__info-language-name'
-						repoLangName.innerHTML = language
-						repoLanguage.appendChild(repoLangName)
 
 					} else {
 
@@ -459,7 +425,7 @@ window.onload = async () => {
 	// .. Render starred list
 	if (!globals.disabled.starred) {
 
-		// Render root container
+		// Render block container
 		const starredContainer = document.createElement('div')
 		starredContainer.className = 'starred'
 		rootContainer.appendChild(starredContainer)
@@ -492,13 +458,12 @@ window.onload = async () => {
 					// Render starred info container
 					const starredInfo = document.createElement('div')
 					starredInfo.className = 'starred__info'
+					starredInfo.innerHTML = (`
+						<div class="starred__info-name">
+							<a href="${url}">${name}</a>
+						</div>
+					`)
 					starredDock.appendChild(starredInfo)
-
-					// Starred name
-					const starredName = document.createElement('div')
-					starredName.className = 'starred__info-name'
-					starredName.innerHTML = `<a href="${url}">${name}</a>`
-					starredInfo.appendChild(starredName)
 
 					if (description) {
 
@@ -512,22 +477,16 @@ window.onload = async () => {
 
 					if (language) {
 
-						// Render starred language container
+						// Starred language
 						const starredLanguage = document.createElement('div')
 						starredLanguage.className = 'starred__info-language'
+						starredLanguage.innerHTML = (`
+							<div class="starred__info-language-icon" style="background-color:${globals.colors[language]}"></div>
+							<div class="starred__info-language-name">
+								${language}
+							</div>
+						`)
 						starredInfo.appendChild(starredLanguage)
-
-						// Starres language icon
-						const starredLangIcon = document.createElement('div')
-						starredLangIcon.className = 'starred__info-language-icon'
-						starredLangIcon.style.backgroundColor = globals.colors[language]
-						starredLanguage.appendChild(starredLangIcon)
-
-						// Starred language name
-						const starredLangName = document.createElement('div')
-						starredLangName.className = 'starred__info-language-name'
-						starredLangName.innerHTML = language
-						starredLanguage.appendChild(starredLangName)
 
 					}
 
@@ -554,13 +513,10 @@ window.onload = async () => {
 	// .. Render copyright
 	if (!globals.disabled.copyright) {
 
-		// Render root container
 		const copyrightContainer = document.createElement('div')
 		copyrightContainer.className = 'copyright'
+		copyrightContainer.innerHTML = `Copyright © ${(new Date()).getFullYear()} ${githubAuthor.name}`
 		rootContainer.appendChild(copyrightContainer)
-
-		const copyrightText = document.createTextNode(`Copyright © ${(new Date()).getFullYear()} ${githubAuthor.name}`)
-		copyrightContainer.appendChild(copyrightText)
 
 	}
 
