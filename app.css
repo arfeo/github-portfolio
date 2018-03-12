@@ -1,0 +1,174 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	padding: 20px 0;
+	font-family: 'Helvetica', 'Arial', 'sans-serif';
+}
+
+a {
+	color: #094177;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+.error {
+	padding: 0 20px;
+	font-weight: 400;
+	color: red;
+}
+
+.author {
+	display: flex;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	z-index: 2;
+	box-shadow: none;
+	width: 100%;
+	height: 140px;
+	min-height: 50px;
+	padding: 20px;
+	background-color: white;
+	font-size: 15px;
+	font-weight: 100;
+}
+
+.author__avatar-dock {
+	width: 140px;
+	min-width: 140px;
+	margin-right: 20px;
+	text-align: center;
+}
+
+.author__avatar {
+	width: 140px;
+	min-width: 70px;
+	max-width: 140px;
+	height: 140px;
+	min-height: 70px;
+	max-height: 140px;
+	border-radius: 70px;
+}
+
+.author__info-dock {
+	transform-origin: 0;
+}
+
+.author__name {
+	margin-bottom: 5px;
+	font-weight: 100;
+	font-size: 30px;
+}
+
+.author__url {
+	font-weight: 100;
+	font-size: 19px;
+}
+
+.bio__dock {
+	padding-left: 160px;
+	font-size: 19px;
+}
+
+.bio,
+.projects,
+.starred {
+	display: flex;
+	align-items: baseline;
+	z-index: 1;
+	margin-top: 20px;
+	margin-bottom: 40px;
+	padding: 0 20px;
+	font-size: 15px;
+	font-weight: 100;
+}
+
+.projects__title,
+.starred__title {
+	display: flex;
+	align-items: top;
+	width: 160px;
+	min-width: 160px;
+	font-weight: 200;
+	font-size: 24px;
+}
+
+.projects__title-counter,
+.starred__title-counter {
+	margin-left: 7px;
+	font-weight: 100;
+	font-size: 12px;
+	color: #999;
+}
+
+.projects__dock {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.projects__info {
+	position: relative;
+	width: 340px;
+	margin-right: 20px;
+	margin-bottom: 20px;
+	border: 1px solid #b0b0b0;
+	padding: 15px 15px 45px;
+}
+
+.projects__info-name,
+.starred__info-name {
+	font-weight: 400;
+}
+
+.projects__info-description,
+.starred__info-description {
+	margin-top: 5px;
+	font-size: 15px;
+}
+
+.projects__info-language {
+	display: flex;
+	align-items: center;
+	position: absolute;
+	bottom: 15px;
+	margin-top: 15px;
+}
+
+.projects__info-language-icon,
+.starred__info-language-icon {
+	width: 14px;
+	height: 14px;
+	margin-right: 7px;
+	border-radius: 7px;
+	background-color: black;
+}
+
+.projects__info-language-name,
+.starred__info-language-name {
+	position: relative;
+	top: 1px;
+	font-size: 12px;
+}
+
+.starred__info {
+	margin-bottom: 20px;
+}
+
+.starred__info-language {
+	display: flex;
+	align-items: center;
+	margin-top: 7px;
+}
+
+.copyright {
+	padding-left: 180px;
+	font-weight: 100;
+	font-size: 12px;
+	color: #999;
+}
