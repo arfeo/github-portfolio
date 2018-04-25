@@ -501,19 +501,9 @@ const renderCopyright = (githubAuthor) => {
 		const copyrightContainer = document.createElement('div');
 
 		copyrightContainer.className = 'copyright';
-		copyrightContainer.innerHTML = `Copyright © ${(new Date()).getFullYear()} ${githubAuthor.name}`;
+		copyrightContainer.innerHTML = `Copyright © ${(new Date()).getFullYear()} ${githubAuthor.name} & GitHub, Inc.`;
 		rootContainer.appendChild(copyrightContainer);
 	}
-};
-
-window.onload = async () => {
-	const { githubAuthor, githubRepos, githubStarred } = await fetchApiData();
-
-	renderAuthorBlock(githubAuthor);
-	renderBioBlock(githubAuthor);
-	renderReposList(githubRepos);
-	renderStarredList(githubStarred);
-	renderCopyright(githubAuthor);
 };
 
 window.onscroll = () => {
@@ -533,4 +523,14 @@ window.onscroll = () => {
 		const scale = (100 - (top <= 30 ? top : 30)) / 100;
 		authorInfoDock.style.transform = `scale(${scale})`;
 	}
+};
+
+window.onload = async () => {
+	const { githubAuthor, githubRepos, githubStarred } = await fetchApiData();
+
+	renderAuthorBlock(githubAuthor);
+	renderBioBlock(githubAuthor);
+	renderReposList(githubRepos);
+	renderStarredList(githubStarred);
+	renderCopyright(githubAuthor);
 };
