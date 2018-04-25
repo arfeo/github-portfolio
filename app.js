@@ -7,9 +7,7 @@ const globals = {
 	api: 'https://api.github.com',
 
 	// Do not show the following repos in the projects list
-	exceptions: [
-		
-	],
+	exceptions: [],
 
 	// Page blocks to be disabled
 	disabled: {
@@ -227,68 +225,62 @@ const globals = {
 		'Dogescript':				'#cca760', 
 		'nesC':						'#94B0C7',
 	},
-}
+};
 
 const apiData = (url, data) => {
-
 	return new Promise((resolve, reject) => {
+		const params = Object.entries(data).map(([key, val]) => `${key}=${val}`).join('&');
+		const xhr = new XMLHttpRequest();
 
-		const params = Object.entries(data).map(([key, val]) => `${key}=${val}`).join('&')
-		const xhr = new XMLHttpRequest()
-
-	    xhr.overrideMimeType('application/json')
-	    xhr.open('GET', `${url}?${params}`, true)
+	    xhr.overrideMimeType('application/json');
+	    xhr.open('GET', `${url}?${params}`, true);
 	    xhr.onload = function() {
 	    	if(this.readyState == 4) {
 		        if(this.status >= 200 && this.status < 300) {
-		            resolve(xhr.responseText)
+		            resolve(xhr.responseText);
 		        } else {
-		        	reject(xhr.statusText)
+		        	reject(xhr.statusText);
 		        }
 		    }
 	    }
 	    xhr.onerror = function() {
-			reject(xhr.statusText)
+			reject(xhr.statusText);
 		}
-	    xhr.send()
+	    xhr.send();
+	});
+};
 
-	})
-
-}
-
-window.onload = async () => {
-
-	const rootContainer = document.getElementById('root')
-
-	let githubAuthor = []
-	let githubRepos = []
-	let githubStarred = []
+const fetchApiData = async () => {
+	let githubAuthor = [];
+	let githubRepos = [];
+	let githubStarred = [];
 
 	// Fetch GitHub api data
 	try {
-
 		let [a, r, s] = await Promise.all([
 			apiData(`${globals.api}/users/${globals.author}`, {}),
 			apiData(`${globals.api}/users/${globals.author}/repos?per_page=${globals.limit.repos}`, {}),
 			apiData(`${globals.api}/users/${globals.author}/starred?per_page=${globals.limit.starred}`, {})
-		])
+		]);
 
-		githubAuthor = JSON.parse(a)
-		githubRepos = JSON.parse(r)
-		githubStarred = JSON.parse(s)
+		githubAuthor = JSON.parse(a);
+		githubRepos = JSON.parse(r);
+		githubStarred = JSON.parse(s);
 
+		return { githubAuthor, githubRepos, githubStarred };
 	} catch (err) {
+		rootContainer.innerHTML = `<div class="error">Error fetching API data: ${err}</div>`;
 
-		rootContainer.innerHTML = `<div class="error">Error fetching API data: ${err}</div>`
-		return
-
+		return;
 	}
+};
 
-	// .. Render author block
+const renderAuthorBlock = (githubAuthor) => {
 	if (!globals.disabled.author) {
+		const rootContainer = document.getElementById('root');
+		const authorContainer = document.createElement('div');
 
-		const authorContainer = document.createElement('div')
-		authorContainer.className = 'author'
+		authorContainer.className = 'author';
 		authorContainer.innerHTML = (`
 			<div class="author__avatar-dock">
 				<img src="${githubAuthor.avatar_url}" class="author__avatar" alt="" />
@@ -301,247 +293,244 @@ window.onload = async () => {
 					<a href="${githubAuthor.html_url}">${githubAuthor.html_url}</a>
 				</div>
 			</div>
-		`)
-		rootContainer.appendChild(authorContainer)
+		`);
+		rootContainer.appendChild(authorContainer);
 
 		// Set page title
-		const pageTitle = document.getElementsByTagName('title')[0]
-		pageTitle.innerHTML = `${githubAuthor.name} (${githubAuthor.login})`
+		const pageTitle = document.getElementsByTagName('title')[0];
 
-		document.body.style.paddingTop = '180px'
+		pageTitle.innerHTML = `${githubAuthor.name} (${githubAuthor.login})`;
 
+		document.body.style.paddingTop = '180px';
 	}
+};
 
-	// .. Render bio block
+const renderBioBlock = (githubAuthor) => {
 	if (!globals.disabled.bio) {
+		const rootContainer = document.getElementById('root');
+		const bioContainer = document.createElement('div');
 
-		const bioContainer = document.createElement('div')
-		bioContainer.className = 'bio'
+		bioContainer.className = 'bio';
 		bioContainer.innerHTML = (`
 			<div class="bio__dock">
 				${githubAuthor.bio ? githubAuthor.bio : 'Bio is empty.'}
 			</div>
-		`)
-		rootContainer.appendChild(bioContainer)
-
+		`);
+		rootContainer.appendChild(bioContainer);
 	}
+};
 
-	// .. Render repos list
+const renderReposList = (githubRepos) => {
 	if (!globals.disabled.projects) {
+		const rootContainer = document.getElementById('root');
 
 		// Render block container
-		const projectsContainer = document.createElement('div')
-		projectsContainer.className = 'projects'
-		rootContainer.appendChild(projectsContainer)
+		const projectsContainer = document.createElement('div');
+
+		projectsContainer.className = 'projects';
+		rootContainer.appendChild(projectsContainer);
 
 		// Set block title
-		const projectsTitle = document.createElement('div')
-		projectsTitle.className = 'projects__title'
-		projectsContainer.appendChild(projectsTitle)
+		const projectsTitle = document.createElement('div');
+		projectsTitle.className = 'projects__title';
+		projectsContainer.appendChild(projectsTitle);
 
 		if (githubRepos && githubRepos.length > 0) {
-
-			let reposCount = 0
+			let reposCount = 0;
 
 			// Render repos dock
-			const reposDock = document.createElement('div')
-			reposDock.className = 'projects__dock'
-			projectsContainer.appendChild(reposDock)
+			const reposDock = document.createElement('div');
+
+			reposDock.className = 'projects__dock';
+			projectsContainer.appendChild(reposDock);
 
 			for (let i = 0; i < githubRepos.length; i++) {
-
-				const name = githubRepos[i].name
-				const url = githubRepos[i].html_url
-				const description = githubRepos[i].description
-				const language = githubRepos[i].language
+				const name = githubRepos[i].name;
+				const url = githubRepos[i].html_url;
+				const description = githubRepos[i].description;
+				const language = githubRepos[i].language;
 
 				if (globals.exceptions.indexOf(name) === -1) {
-
-					reposCount++
+					reposCount++;
 
 					// Render repo info container
-					const repoInfo = document.createElement('div')
-					repoInfo.className = 'projects__info'
+					const repoInfo = document.createElement('div');
+
+					repoInfo.className = 'projects__info';
 					repoInfo.innerHTML = (`
 						<div class="projects__info-name">
 							<a href="${url}">${name}</a>
 						</div>
-					`)
-					reposDock.appendChild(repoInfo)
+					`);
+					reposDock.appendChild(repoInfo);
 
 					if (description) {
 
 						// Repo description
-						const repoDescription = document.createElement('div')
-						repoDescription.className = 'projects__info-description'
-						repoDescription.innerHTML = description
-						repoInfo.appendChild(repoDescription)
+						const repoDescription = document.createElement('div');
 
+						repoDescription.className = 'projects__info-description';
+						repoDescription.innerHTML = description;
+						repoInfo.appendChild(repoDescription);
 					}
 
 					if (language) {
 
 						// Repo language
-						const repoLanguage = document.createElement('div')
-						repoLanguage.className = 'projects__info-language'
+						const repoLanguage = document.createElement('div');
+
+						repoLanguage.className = 'projects__info-language';
 						repoLanguage.innerHTML = (`
 							<div class="projects__info-language-icon" style="background-color:${globals.colors[language]}"></div>
 							<div class="projects__info-language-name">
 								${language}
 							</div>
-						`)
-						repoInfo.appendChild(repoLanguage)
-
+						`);
+						repoInfo.appendChild(repoLanguage);
 					} else {
-
-						repoInfo.style.paddingBottom = '15px'
-
+						repoInfo.style.paddingBottom = '15px';
 					}
-
 				}
-
 			}
 
 			if (reposCount > 0) {
-
-				projectsTitle.innerHTML = 'Projects'
+				projectsTitle.innerHTML = 'Projects';
 
 				// Render repos counter
-				const cnt = document.createElement('div')
-				cnt.className = 'projects__title-counter'
-				cnt.innerHTML = reposCount
-				projectsTitle.appendChild(cnt)
+				const cnt = document.createElement('div');
 
+				cnt.className = 'projects__title-counter';
+				cnt.innerHTML = reposCount;
+				projectsTitle.appendChild(cnt);
 			}
-
 		} else {
-
-			projectsContainer.appendChild(document.createTextNode('No repos found.'))
-
+			projectsContainer.appendChild(document.createTextNode('No repos found.'));
 		}
-
 	}
+};
 
-	// .. Render starred list
+const renderStarredList = (githubStarred) => {
 	if (!globals.disabled.starred) {
+		const rootContainer = document.getElementById('root');
 
 		// Render block container
-		const starredContainer = document.createElement('div')
-		starredContainer.className = 'starred'
-		rootContainer.appendChild(starredContainer)
+		const starredContainer = document.createElement('div');
+
+		starredContainer.className = 'starred';
+		rootContainer.appendChild(starredContainer);
 
 		// Set block title
-		const starredTitle = document.createElement('div')
-		starredTitle.className = 'starred__title'
-		starredContainer.appendChild(starredTitle)
+		const starredTitle = document.createElement('div');
+
+		starredTitle.className = 'starred__title';
+		starredContainer.appendChild(starredTitle);
 
 		if (githubStarred && githubStarred.length > 0 && globals.limit.starred > 0) {
-
-			let starredCount = 0
+			let starredCount = 0;
 
 			// Render starred dock
-			const starredDock = document.createElement('div')
-			starredDock.className = 'starred__dock'
-			starredContainer.appendChild(starredDock)
+			const starredDock = document.createElement('div');
+
+			starredDock.className = 'starred__dock';
+			starredContainer.appendChild(starredDock);
 
 			for (let i = 0; i < githubStarred.length; i++) {
-
-				const name = githubStarred[i].full_name
-				const url = githubStarred[i].html_url
-				const description = githubStarred[i].description
-				const language = githubStarred[i].language
+				const name = githubStarred[i].full_name;
+				const url = githubStarred[i].html_url;
+				const description = githubStarred[i].description;
+				const language = githubStarred[i].language;
 
 				if (starredCount < globals.limit.starred) {
-
-					starredCount++
+					starredCount++;
 
 					// Render starred info container
-					const starredInfo = document.createElement('div')
-					starredInfo.className = 'starred__info'
+					const starredInfo = document.createElement('div');
+
+					starredInfo.className = 'starred__info';
 					starredInfo.innerHTML = (`
 						<div class="starred__info-name">
 							<a href="${url}">${name}</a>
 						</div>
-					`)
-					starredDock.appendChild(starredInfo)
+					`);
+					starredDock.appendChild(starredInfo);
 
 					if (description) {
 
 						// Starred description
-						const starredDescription = document.createElement('div')
-						starredDescription.className = 'starred__info-description'
-						starredDescription.innerHTML = description
-						starredInfo.appendChild(starredDescription)
+						const starredDescription = document.createElement('div');
 
+						starredDescription.className = 'starred__info-description';
+						starredDescription.innerHTML = description;
+						starredInfo.appendChild(starredDescription);
 					}
 
 					if (language) {
 
 						// Starred language
-						const starredLanguage = document.createElement('div')
-						starredLanguage.className = 'starred__info-language'
+						const starredLanguage = document.createElement('div');
+
+						starredLanguage.className = 'starred__info-language';
 						starredLanguage.innerHTML = (`
 							<div class="starred__info-language-icon" style="background-color:${globals.colors[language]}"></div>
 							<div class="starred__info-language-name">
 								${language}
 							</div>
-						`)
-						starredInfo.appendChild(starredLanguage)
-
+						`);
+						starredInfo.appendChild(starredLanguage);
 					}
-
 				}
-
 			}
 
-			starredTitle.innerHTML = 'Starred'
+			starredTitle.innerHTML = 'Starred';
 
 			// Render starred counter
-			const cnt = document.createElement('div')
-			cnt.className = 'starred__title-counter'
-			cnt.innerHTML = starredCount
-			starredTitle.appendChild(cnt)
+			const cnt = document.createElement('div');
 
+			cnt.className = 'starred__title-counter';
+			cnt.innerHTML = starredCount;
+			starredTitle.appendChild(cnt);
 		} else {
-
-			starredContainer.appendChild(document.createTextNode('No starred repos found.'))
-
+			starredContainer.appendChild(document.createTextNode('No starred repos found.'));
 		}
-
 	}
+};
 
-	// .. Render copyright
+const renderCopyright = (githubAuthor) => {
 	if (!globals.disabled.copyright) {
+		const rootContainer = document.getElementById('root');
+		const copyrightContainer = document.createElement('div');
 
-		const copyrightContainer = document.createElement('div')
-		copyrightContainer.className = 'copyright'
-		copyrightContainer.innerHTML = `Copyright © ${(new Date()).getFullYear()} ${githubAuthor.name}`
-		rootContainer.appendChild(copyrightContainer)
-
+		copyrightContainer.className = 'copyright';
+		copyrightContainer.innerHTML = `Copyright © ${(new Date()).getFullYear()} ${githubAuthor.name}`;
+		rootContainer.appendChild(copyrightContainer);
 	}
+};
 
-}
+window.onload = async () => {
+	const { githubAuthor, githubRepos, githubStarred } = await fetchApiData();
+
+	renderAuthorBlock(githubAuthor);
+	renderBioBlock(githubAuthor);
+	renderReposList(githubRepos);
+	renderStarredList(githubStarred);
+	renderCopyright(githubAuthor);
+};
 
 window.onscroll = () => {
-
 	if (!globals.disabled.author) {
-
-		const top  = window.pageYOffset || document.documentElement.scrollTop
-
-		const authorContainer = document.querySelector('.author')
-		const authorAvatar = document.querySelector('.author__avatar')
-		const authorInfoDock = document.querySelector('.author__info-dock')
+		const top  = window.pageYOffset || document.documentElement.scrollTop;
+		const authorContainer = document.querySelector('.author');
+		const authorAvatar = document.querySelector('.author__avatar');
+		const authorInfoDock = document.querySelector('.author__info-dock');
 
 		// Add shadow to author container on window scroll
-		authorContainer.style.boxShadow = top >= 1 ? '0 2px 6px rgba(9,65,119,0.3)' : 'none'
+		authorContainer.style.boxShadow = top >= 1 ? '0 2px 6px rgba(9,65,119,0.3)' : 'none';
 
 		// Scale author container on window scroll
-		authorContainer.style.height = `calc(130px - ${top}px)`
-		authorAvatar.style.width = `calc(130px - ${top}px)`
-		authorAvatar.style.height = `calc(130px - ${top}px)`
-		const scale = (100 - (top <= 30 ? top : 30)) / 100
-		authorInfoDock.style.transform = `scale(${scale})`
-
+		authorContainer.style.height = `calc(130px - ${top}px)`;
+		authorAvatar.style.width = `calc(130px - ${top}px)`;
+		authorAvatar.style.height = `calc(130px - ${top}px)`;
+		const scale = (100 - (top <= 30 ? top : 30)) / 100;
+		authorInfoDock.style.transform = `scale(${scale})`;
 	}
-
-}
+};
