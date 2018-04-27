@@ -374,6 +374,11 @@ const renderReposList = (githubRepos) => {
 						repoInfo.appendChild(repoDescription);
 					}
 
+					const repoServiceBlock = document.createElement('div');
+
+					repoServiceBlock.className = 'projects__info-service-block';
+					repoInfo.appendChild(repoServiceBlock);
+
 					if (language) {
 
 						// Repo language
@@ -386,7 +391,16 @@ const renderReposList = (githubRepos) => {
 								${language}
 							</div>
 						`);
-						repoInfo.appendChild(repoLanguage);
+						repoServiceBlock.appendChild(repoLanguage);
+
+						// Repo readme
+						const repoReadme = document.createElement('div');
+
+						repoReadme.className = 'projects__info-readme';
+						repoReadme.innerHTML = (`
+							<span class="pseudolink">Readme</span>
+						`);
+						repoServiceBlock.appendChild(repoReadme);
 					} else {
 						repoInfo.style.paddingBottom = '15px';
 					}
@@ -480,6 +494,13 @@ const renderStarredList = (githubStarred) => {
 					}
 				}
 			}
+
+			// View all link
+			const starredViewAll = document.createElement('div');
+
+			starredViewAll.className = 'starred__view-all';
+			starredViewAll.innerHTML = `<a href="https://github.com/${globals.author}?tab=stars">View all starred projects</a>`;
+			starredDock.appendChild(starredViewAll);
 
 			starredTitle.innerHTML = 'Starred';
 

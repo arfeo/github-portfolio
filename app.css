@@ -8,9 +8,11 @@ body {
 	font-family: 'Helvetica', 'Arial', 'sans-serif';
 }
 
-a {
+a,
+.pseudolink {
 	color: #094177;
 	text-decoration: none;
+	cursor: pointer;
 }
 
 a:hover {
@@ -115,10 +117,11 @@ a:hover {
 .projects__info {
 	position: relative;
 	width: 340px;
+	border: 1px solid #d1d5da;
 	margin-right: 20px;
 	margin-bottom: 20px;
-	border: 1px solid #b0b0b0;
 	padding: 15px 15px 45px;
+	border-radius: 3px;
 }
 
 .projects__info-name,
@@ -132,12 +135,19 @@ a:hover {
 	font-size: 15px;
 }
 
+.projects__info-service-block {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	position: absolute;
+	bottom: 15px;
+	width: calc(100% - 30px);
+	margin-top: 15px;
+}
+
 .projects__info-language {
 	display: flex;
 	align-items: center;
-	position: absolute;
-	bottom: 15px;
-	margin-top: 15px;
 }
 
 .projects__info-language-icon,
@@ -150,7 +160,8 @@ a:hover {
 }
 
 .projects__info-language-name,
-.starred__info-language-name {
+.starred__info-language-name,
+.projects__info-readme {
 	position: relative;
 	top: 1px;
 	font-size: 12px;
@@ -174,6 +185,11 @@ a:hover {
 	display: flex;
 	align-items: center;
 	margin-top: 7px;
+}
+
+.starred__view-all {
+	width: 100%;
+	margin-top: 20px;
 }
 
 .copyright {
