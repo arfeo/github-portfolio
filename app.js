@@ -9,6 +9,12 @@ const globals = {
 	// Do not show the following repos in the projects list
 	exceptions: [],
 
+	// Show or hide counters
+	counters: {
+		projects: false,
+		starred: false,
+	},
+
 	// Page blocks to be disabled
 	disabled: {
 		'author': false,
@@ -407,8 +413,9 @@ const renderReposList = (githubRepos) => {
 				}
 			}
 
-			if (reposCount > 0) {
-				projectsTitle.innerHTML = 'Projects';
+			projectsTitle.innerHTML = 'Projects';
+
+			if (reposCount > 0 && globals.counters.projects) {
 
 				// Render repos counter
 				const cnt = document.createElement('div');
@@ -504,12 +511,15 @@ const renderStarredList = (githubStarred) => {
 
 			starredTitle.innerHTML = 'Starred';
 
-			// Render starred counter
-			const cnt = document.createElement('div');
+			if (globals.counters.starred) {
 
-			cnt.className = 'starred__title-counter';
-			cnt.innerHTML = starredCount;
-			starredTitle.appendChild(cnt);
+				// Render starred counter
+				const cnt = document.createElement('div');
+
+				cnt.className = 'starred__title-counter';
+				cnt.innerHTML = starredCount;
+				starredTitle.appendChild(cnt);
+			}
 		} else {
 			starredContainer.appendChild(document.createTextNode('No starred repos found.'));
 		}
