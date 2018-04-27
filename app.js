@@ -29,8 +29,9 @@ const globals = {
 		'repos': 100,
 		'starred': 100,
 	},
+};
 
-	// GitHub language colors
+const constants = {
 	colors: {
 		'Mercury':					'#ff2b2b', 
 		'TypeScript':				'#2b7489', 
@@ -240,6 +241,7 @@ const apiData = (url, data) => {
 
 	    xhr.overrideMimeType('application/json');
 	    xhr.open('GET', `${url}?${params}`, true);
+
 	    xhr.onload = function() {
 	    	if(this.readyState == 4) {
 		        if(this.status >= 200 && this.status < 300) {
@@ -249,9 +251,11 @@ const apiData = (url, data) => {
 		        }
 		    }
 	    }
+
 	    xhr.onerror = function() {
 			reject(xhr.statusText);
 		}
+
 	    xhr.send();
 	});
 };
@@ -263,7 +267,7 @@ const fetchApiData = async () => {
 
 	// Fetch GitHub api data
 	try {
-		let [a, r, s] = await Promise.all([
+		const [a, r, s] = await Promise.all([
 			apiData(`${globals.api}/users/${globals.author}`, {}),
 			apiData(`${globals.api}/users/${globals.author}/repos?per_page=${globals.limit.repos}`, {}),
 			apiData(`${globals.api}/users/${globals.author}/starred?per_page=${globals.limit.starred}`, {})
@@ -392,7 +396,7 @@ const renderReposList = (githubRepos) => {
 
 						repoLanguage.className = 'projects__info-language';
 						repoLanguage.innerHTML = (`
-							<div class="projects__info-language-icon" style="background-color:${globals.colors[language]}"></div>
+							<div class="projects__info-language-icon" style="background-color:${constants.colors[language]}"></div>
 							<div class="projects__info-language-name">
 								${language}
 							</div>
@@ -492,7 +496,7 @@ const renderStarredList = (githubStarred) => {
 
 						starredLanguage.className = 'starred__info-language';
 						starredLanguage.innerHTML = (`
-							<div class="starred__info-language-icon" style="background-color:${globals.colors[language]}"></div>
+							<div class="starred__info-language-icon" style="background-color:${constants.colors[language]}"></div>
 							<div class="starred__info-language-name">
 								${language}
 							</div>
