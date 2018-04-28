@@ -411,6 +411,28 @@ const renderReposList = (githubRepos) => {
 							<span class="pseudolink">Readme</span>
 						`);
 						repoServiceBlock.appendChild(repoReadme);
+
+						// Repo readme modal
+						repoReadme.addEventListener('click', async () => {
+							const layerContainer = document.createElement('div');
+							const readme = await apiData(`https://raw.githubusercontent.com/${globals.author}/${githubRepos[i].name}/master/README.md`, {})
+													.catch(() => 'No description provided.');
+
+							layerContainer.className = 'layer-container';
+							layerContainer.innerHTML = (`
+								<div class="layer-backdrop"></div>
+								<div class="layer-modal">
+									<div id="layer-close" class="layer-close">✕</div>
+									<pre class="layer-body">${readme}</pre>
+								</div>
+							`);
+
+							document.body.appendChild(layerContainer);
+
+							document.getElementById('layer-close').addEventListener('click', () => {
+								layerContainer.remove();
+							});
+						});
 					} else {
 						repoInfo.style.paddingBottom = '15px';
 					}
