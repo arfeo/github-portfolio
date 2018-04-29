@@ -304,6 +304,7 @@ const renderAuthorBlock = (githubAuthor) => {
 				</div>
 			</div>
 		`);
+
 		rootContainer.appendChild(authorContainer);
 
 		// Set page title
@@ -326,6 +327,7 @@ const renderBioBlock = (githubAuthor) => {
 				${githubAuthor.bio ? githubAuthor.bio : 'Bio is empty.'}
 			</div>
 		`);
+
 		rootContainer.appendChild(bioContainer);
 	}
 };
@@ -338,11 +340,14 @@ const renderReposList = (githubRepos) => {
 		const projectsContainer = document.createElement('div');
 
 		projectsContainer.className = 'projects';
+
 		rootContainer.appendChild(projectsContainer);
 
 		// Set block title
 		const projectsTitle = document.createElement('div');
+
 		projectsTitle.className = 'projects__title';
+
 		projectsContainer.appendChild(projectsTitle);
 
 		if (githubRepos && githubRepos.length > 0) {
@@ -352,6 +357,7 @@ const renderReposList = (githubRepos) => {
 			const reposDock = document.createElement('div');
 
 			reposDock.className = 'projects__dock';
+
 			projectsContainer.appendChild(reposDock);
 
 			for (let i = 0; i < githubRepos.length; i++) {
@@ -372,6 +378,7 @@ const renderReposList = (githubRepos) => {
 							<a href="${url}">${name}</a>
 						</div>
 					`);
+
 					reposDock.appendChild(repoInfo);
 
 					if (description) {
@@ -387,6 +394,7 @@ const renderReposList = (githubRepos) => {
 					const repoServiceBlock = document.createElement('div');
 
 					repoServiceBlock.className = 'projects__info-service-block';
+
 					repoInfo.appendChild(repoServiceBlock);
 
 					if (language) {
@@ -401,6 +409,7 @@ const renderReposList = (githubRepos) => {
 								${language}
 							</div>
 						`);
+
 						repoServiceBlock.appendChild(repoLanguage);
 
 						// Repo readme
@@ -410,6 +419,7 @@ const renderReposList = (githubRepos) => {
 						repoReadme.innerHTML = (`
 							<span class="pseudolink">Readme</span>
 						`);
+
 						repoServiceBlock.appendChild(repoReadme);
 
 						// Repo readme modal
@@ -423,7 +433,7 @@ const renderReposList = (githubRepos) => {
 								<div class="layer-backdrop"></div>
 								<div class="layer-modal">
 									<div id="layer-close" class="layer-close">✕</div>
-									<pre class="layer-body">${readme}</pre>
+									<pre class="layer-body">${markdownProcessing(readme)}</pre>
 								</div>
 							`);
 
@@ -448,6 +458,7 @@ const renderReposList = (githubRepos) => {
 
 				cnt.className = 'projects__title-counter';
 				cnt.innerHTML = reposCount;
+
 				projectsTitle.appendChild(cnt);
 			}
 		} else {
@@ -464,12 +475,14 @@ const renderStarredList = (githubStarred) => {
 		const starredContainer = document.createElement('div');
 
 		starredContainer.className = 'starred';
+
 		rootContainer.appendChild(starredContainer);
 
 		// Set block title
 		const starredTitle = document.createElement('div');
 
 		starredTitle.className = 'starred__title';
+
 		starredContainer.appendChild(starredTitle);
 
 		if (githubStarred && githubStarred.length > 0 && globals.limit.starred > 0) {
@@ -479,6 +492,7 @@ const renderStarredList = (githubStarred) => {
 			const starredDock = document.createElement('div');
 
 			starredDock.className = 'starred__dock';
+
 			starredContainer.appendChild(starredDock);
 
 			for (let i = 0; i < githubStarred.length; i++) {
@@ -499,6 +513,7 @@ const renderStarredList = (githubStarred) => {
 							<a href="${url}">${name}</a>
 						</div>
 					`);
+
 					starredDock.appendChild(starredInfo);
 
 					if (description) {
@@ -508,6 +523,7 @@ const renderStarredList = (githubStarred) => {
 
 						starredDescription.className = 'starred__info-description';
 						starredDescription.innerHTML = description;
+
 						starredInfo.appendChild(starredDescription);
 					}
 
@@ -523,6 +539,7 @@ const renderStarredList = (githubStarred) => {
 								${language}
 							</div>
 						`);
+
 						starredInfo.appendChild(starredLanguage);
 					}
 				}
@@ -533,6 +550,7 @@ const renderStarredList = (githubStarred) => {
 
 			starredViewAll.className = 'starred__view-all';
 			starredViewAll.innerHTML = `<a href="https://github.com/${globals.author}?tab=stars">View all starred projects</a>`;
+
 			starredDock.appendChild(starredViewAll);
 
 			starredTitle.innerHTML = 'Starred';
@@ -544,6 +562,7 @@ const renderStarredList = (githubStarred) => {
 
 				cnt.className = 'starred__title-counter';
 				cnt.innerHTML = starredCount;
+
 				starredTitle.appendChild(cnt);
 			}
 		} else {
@@ -559,8 +578,57 @@ const renderCopyright = (githubAuthor) => {
 
 		copyrightContainer.className = 'copyright';
 		copyrightContainer.innerHTML = `Copyright © ${(new Date()).getFullYear()} ${githubAuthor.name} & GitHub, Inc.`;
+
 		rootContainer.appendChild(copyrightContainer);
 	}
+};
+
+const markdownProcessing = (source) => {
+	let proc = source;
+
+	// Headers
+	proc = proc.replace(/(^|[^#])# (.*)/gui, '<h1>$2</h1>');
+	proc = proc.replace(/(^|[^#])## (.*)/gui, '<h2>$2</h2>');
+	proc = proc.replace(/(^|[^#])### (.*)/gui, '<h3>$2</h3>');
+	proc = proc.replace(/(^|[^#])#### (.*)/gui, '<h4>$2</h4>');
+	proc = proc.replace(/(^|[^#])##### (.*)/gui, '<h5>$2</h5>');
+	proc = proc.replace(/(^|[^#])###### (.*)/gui, '<h6>$2</h6>');
+
+	// Images and links
+	proc = proc.replace(/!\[(.*)\]\((http[s]?:[\/]{2}([^\s]+))([\s]?"(.*)")?\)/gui, '<img src="$2" alt="$1" title="$5" />');
+	proc = proc.replace(/([^!])\[(.*)\]\((http[s]?:[\/]{2}([^\s]+))[^\)]?\)/gui, '$1<a href="$3" target="_blank">$2</a>');
+	proc = proc.replace(/([\(\s)]+)(http[s]?:[\/]{2}[^\s]+)/gui, '$1<a href="$2" target="_blank">$2</a>');
+
+	// Text
+	proc = proc.replace(/(^|[\s])[_]{1}([^_]+)[_]{1}(?!_)/gui, '$1<em>$2</em>');
+	proc = proc.replace(/(^|[^\*])\*(?!\*)(.*?)\*(?!\*)/gui, '$1<em>$2</em>');
+	proc = proc.replace(/(^|[\s])[_]{2}([^_]+)[_]{2}(?!_)/gui, '$1<strong>$2</strong>');
+	proc = proc.replace(/(^|[^\*])[\*]{2}(?!\*)(.*?)[\*]{2}(?!\*)/gui, '$1<strong>$2</strong>');
+	proc = proc.replace(/(^|[\s])[~]{2}([^~]+)[~]{2}(?!~)/gui, '$1<strike>$2</strike>');
+
+	// Code
+	proc = proc.replace(/(^|[^`])`([^`]+)`(?!`)/gui, '$1<code>$2</code>');
+	proc = proc.replace(/[`]{3}.*?\n([^`]+)[`]{3}/gui, '<pre>$1</pre>');
+	proc = proc.replace(/(^|[\n]{2})(([\s]{4}.*)+)/gui, '$1<pre>$2</pre>');
+
+	// Lists
+	proc = proc.replace(/(^|[\n]{2})(\*\s)/gui, '$1<ul>\n$2');
+	proc = proc.replace(/(^|[\n]{2})(-\s)/gui, '$1<ul>\n$2');
+	proc = proc.replace(/(^|[\n]{2})(\d\.\s)/gui, '$1<ol>\n$2');
+	proc = proc.replace(/(^|\n)(\*\s.*([\n]{2}|$))/gui, '$1$2</ul>');
+	proc = proc.replace(/(^|\n)(-\s.*([\n]{2}|$))/gui, '$1$2</ul>');
+	proc = proc.replace(/(^|\n)([\s]{2}\*\s.*([\n]{2}|$))/gui, '$1$2</ul>');
+	proc = proc.replace(/(^|\n)([\s]{2}-\s.*([\n]{2}|$))/gui, '$1$2</ul>');
+	proc = proc.replace(/(^|\n)(\d\.\s.*([\n]{2}|$))/gui, '$1$2</ol>');
+	proc = proc.replace(/(^|[\n])[\*]{1}\s(.*)/gui, '$1<li>$2</li>');
+	proc = proc.replace(/(^|[\n])[-]{1}\s(.*)((\n[\s]{2}-\s.*)+)/gui, '$1<li>$2\n<ul>\n$3\n</ul></li>');
+	proc = proc.replace(/(^|[\n])[-]{1}\s(.*)/gui, '$1<li>$2</li>');
+	proc = proc.replace(/(^|[\n])[\s]{2}[-]{1}\s(.*)/gui, '$1<li>$2</li>');
+	proc = proc.replace(/(^|[\n])\d\.\s(.*)((\n[\s]{2}\d\.\s.*)+)/gui, '$1<li>$2\n<ol>\n$3\n</ol></li>');
+	proc = proc.replace(/(^|[\n])\d\.\s(.*)/gui, '$1<li>$2</li>');
+	proc = proc.replace(/(^|[\n])[\s]{2}\d\.\s(.*)/gui, '$1<li>$2</li>');
+
+	return proc;
 };
 
 window.onscroll = () => {
@@ -585,6 +653,7 @@ window.onscroll = () => {
 window.onload = async () => {
 	const { githubAuthor, githubRepos, githubStarred } = await fetchApiData();
 
+	// Render page blocks
 	renderAuthorBlock(githubAuthor);
 	renderBioBlock(githubAuthor);
 	renderReposList(githubRepos);

@@ -55,7 +55,7 @@ a:hover {
 	justify-content: center;
 	align-items: center;
 	width: 80vw;
-	height: 80vh;
+	height: 90vh;
 	background-color: white;
 	border-radius: 3px;
 }
@@ -79,6 +79,40 @@ a:hover {
 	height: calc(100% - 90px);
 	font-family: 'Courier New', 'Monaco', monospace;
 	white-space: pre-wrap;
+}
+
+.layer-body code {
+	border: 1px solid #ddd;
+	margin: 0 2px;
+    padding: 0px 5px;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+	white-space: nowrap;
+}
+
+.layer-body pre {
+	padding: 6px 10px;
+	background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    font-size: 13px;
+    line-height: 19px;
+    overflow: auto;
+    border-radius: 3px;
+}
+
+.layer-body blockquote {
+	border-left: 4px solid #DDD;
+    padding: 0 15px;
+    color: #777;
+}
+
+.layer-body img {
+	max-width: 100%;
+}
+
+.layer-body ul {
+	padding-left: 20px;
+	list-style-type: disc;
 }
 
 .author {
