@@ -587,12 +587,12 @@ const markdownProcessing = (source) => {
 	let proc = source;
 
 	// Headers
-	proc = proc.replace(/(^|[^#])# (.*)/gui, '<h1>$2</h1>');
-	proc = proc.replace(/(^|[^#])## (.*)/gui, '<h2>$2</h2>');
-	proc = proc.replace(/(^|[^#])### (.*)/gui, '<h3>$2</h3>');
-	proc = proc.replace(/(^|[^#])#### (.*)/gui, '<h4>$2</h4>');
-	proc = proc.replace(/(^|[^#])##### (.*)/gui, '<h5>$2</h5>');
-	proc = proc.replace(/(^|[^#])###### (.*)/gui, '<h6>$2</h6>');
+	proc = proc.replace(/(^|[^#])# (.*)/gui, '$1<h1>$2</h1>');
+	proc = proc.replace(/(^|[^#])## (.*)/gui, '$1<h2>$2</h2>');
+	proc = proc.replace(/(^|[^#])### (.*)/gui, '$1<h3>$2</h3>');
+	proc = proc.replace(/(^|[^#])#### (.*)/gui, '$1<h4>$2</h4>');
+	proc = proc.replace(/(^|[^#])##### (.*)/gui, '$1<h5>$2</h5>');
+	proc = proc.replace(/(^|[^#])###### (.*)/gui, '$1<h6>$2</h6>');
 
 	// Images and links
 	proc = proc.replace(/!\[(.*)\]\((http[s]?:[\/]{2}([^\s]+))([\s]?"(.*)")?\)/gui, '<img src="$2" alt="$1" title="$5" />');
@@ -611,20 +611,23 @@ const markdownProcessing = (source) => {
 	proc = proc.replace(/[`]{3}.*?\n([^`]+)[`]{3}/gui, '<pre>$1</pre>');
 	proc = proc.replace(/(^|[\n]{2})(([\s]{4}.*)+)/gui, '$1<pre>$2</pre>');
 
+	// Quotes
+	proc = proc.replace(/(^|[\n])(([>]\s.*[\n\S])+)/gui, '<blockquote>$2</blockquote>');
+
 	// Lists
-	proc = proc.replace(/(^|[\n]{2})(\*\s)/gui, '$1<ul>\n$2');
-	proc = proc.replace(/(^|[\n]{2})(-\s)/gui, '$1<ul>\n$2');
-	proc = proc.replace(/(^|[\n]{2})(\d\.\s)/gui, '$1<ol>\n$2');
-	proc = proc.replace(/(^|\n)(\*\s.*([\n]{2}|$))/gui, '$1$2</ul>');
-	proc = proc.replace(/(^|\n)(-\s.*([\n]{2}|$))/gui, '$1$2</ul>');
-	proc = proc.replace(/(^|\n)([\s]{2}\*\s.*([\n]{2}|$))/gui, '$1$2</ul>');
-	proc = proc.replace(/(^|\n)([\s]{2}-\s.*([\n]{2}|$))/gui, '$1$2</ul>');
-	proc = proc.replace(/(^|\n)(\d\.\s.*([\n]{2}|$))/gui, '$1$2</ol>');
+	proc = proc.replace(/(^|[\n]{2})(\*\s)/gui, '\n<ul>\n$2');
+	proc = proc.replace(/(^|[\n]{2})(-\s)/gui, '\n<ul>\n$2');
+	proc = proc.replace(/(^|[\n]{2})(\d\.\s)/gui, '\n<ol>\n$2');
+	proc = proc.replace(/(^|\n)((\*\s.*)[\n]{2})/gui, '$1$3\n</ul>');
+	proc = proc.replace(/(^|\n)((-\s.*)[\n]{2})/gui, '$1$3\n</ul>');
+	proc = proc.replace(/(^|\n)(([\s]{2}\*\s.*)[\n]{2})/gui, '$1$3\n</ul>');
+	proc = proc.replace(/(^|\n)(([\s]{2}-\s.*)[\n]{2})/gui, '$1$3\n</ul>');
+	proc = proc.replace(/(^|\n)((\d\.\s.*)[\n]{2})/gui, '$1$3\n</ol>');
 	proc = proc.replace(/(^|[\n])[\*]{1}\s(.*)/gui, '$1<li>$2</li>');
-	proc = proc.replace(/(^|[\n])[-]{1}\s(.*)((\n[\s]{2}-\s.*)+)/gui, '$1<li>$2\n<ul>\n$3\n</ul></li>');
+	proc = proc.replace(/(^|[\n])[-]{1}\s(.*)((\n[\s]{2}-\s.*)+)/gui, '$1<li>$2<ul>\n$3\n</ul></li>');
 	proc = proc.replace(/(^|[\n])[-]{1}\s(.*)/gui, '$1<li>$2</li>');
 	proc = proc.replace(/(^|[\n])[\s]{2}[-]{1}\s(.*)/gui, '$1<li>$2</li>');
-	proc = proc.replace(/(^|[\n])\d\.\s(.*)((\n[\s]{2}\d\.\s.*)+)/gui, '$1<li>$2\n<ol>\n$3\n</ol></li>');
+	proc = proc.replace(/(^|[\n])\d\.\s(.*)((\n[\s]{2}\d\.\s.*)+)/gui, '$1<li>$2<ol>\n$3\n</ol></li>');
 	proc = proc.replace(/(^|[\n])\d\.\s(.*)/gui, '$1<li>$2</li>');
 	proc = proc.replace(/(^|[\n])[\s]{2}\d\.\s(.*)/gui, '$1<li>$2</li>');
 
