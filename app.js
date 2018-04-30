@@ -611,25 +611,28 @@ const markdownProcessing = (source) => {
 	proc = proc.replace(/[`]{3}.*?\n([^`]+)[`]{3}/gui, '<pre>$1</pre>');
 	proc = proc.replace(/(^|[\n]{2})(([\s]{4}.*)+)/gui, '$1<pre>$2</pre>');
 
-	// Quotes
-	proc = proc.replace(/(^|[\n])(([>]\s.*[\n\S])+)/gui, '<blockquote>$2</blockquote>');
-
 	// Lists
-	proc = proc.replace(/(^|[\n]{2})(\*\s)/gui, '\n<ul>\n$2');
-	proc = proc.replace(/(^|[\n]{2})(-\s)/gui, '\n<ul>\n$2');
-	proc = proc.replace(/(^|[\n]{2})(\d\.\s)/gui, '\n<ol>\n$2');
-	proc = proc.replace(/(^|\n)((\*\s.*)[\n]{2})/gui, '$1$3\n</ul>');
-	proc = proc.replace(/(^|\n)((-\s.*)[\n]{2})/gui, '$1$3\n</ul>');
-	proc = proc.replace(/(^|\n)(([\s]{2}\*\s.*)[\n]{2})/gui, '$1$3\n</ul>');
-	proc = proc.replace(/(^|\n)(([\s]{2}-\s.*)[\n]{2})/gui, '$1$3\n</ul>');
-	proc = proc.replace(/(^|\n)((\d\.\s.*)[\n]{2})/gui, '$1$3\n</ol>');
+	proc = proc.replace(/(^|[\n]{2})(\*\s)/gui, '$1<ul>\n$2');
+	proc = proc.replace(/(^|[\n]{2})(-\s)/gui, '$1<ul>\n$2');
+	proc = proc.replace(/(^|[\n]{2})(\d\.\s)/gui, '$1<ol>\n$2');
+	proc = proc.replace(/(^|\n)((\*\s.*)[\n]{2})/gui, '$1$3\n</ul>\n\n');
+	proc = proc.replace(/(^|\n)((-\s.*)[\n]{2})/gui, '$1$3\n</ul>\n\n');
+	proc = proc.replace(/(^|\n)(([\s]{2}\*\s.*)[\n]{2})/gui, '$1$3\n</ul>\n\n');
+	proc = proc.replace(/(^|\n)(([\s]{2}-\s.*)[\n]{2})/gui, '$1$3\n</ul>\n\n');
+	proc = proc.replace(/(^|\n)((\d\.\s.*)[\n]{2})/gui, '$1$3\n</ol>\n\n');
 	proc = proc.replace(/(^|[\n])[\*]{1}\s(.*)/gui, '$1<li>$2</li>');
-	proc = proc.replace(/(^|[\n])[-]{1}\s(.*)((\n[\s]{2}-\s.*)+)/gui, '$1<li>$2<ul>\n$3\n</ul></li>');
+	proc = proc.replace(/(^|[\n])[-]{1}\s(.*)((\n[\s]{2}-\s.*)+)/gui, '$1<li>$2\n<ul>$3\n</ul>\n</li>');
 	proc = proc.replace(/(^|[\n])[-]{1}\s(.*)/gui, '$1<li>$2</li>');
 	proc = proc.replace(/(^|[\n])[\s]{2}[-]{1}\s(.*)/gui, '$1<li>$2</li>');
-	proc = proc.replace(/(^|[\n])\d\.\s(.*)((\n[\s]{2}\d\.\s.*)+)/gui, '$1<li>$2<ol>\n$3\n</ol></li>');
+	proc = proc.replace(/(^|[\n])\d\.\s(.*)((\n[\s]{2}\d\.\s.*)+)/gui, '$1<li>$2\n<ol>$3\n</ol>\n</li>');
 	proc = proc.replace(/(^|[\n])\d\.\s(.*)/gui, '$1<li>$2</li>');
 	proc = proc.replace(/(^|[\n])[\s]{2}\d\.\s(.*)/gui, '$1<li>$2</li>');
+
+	// Quotes
+	proc = proc.replace(/(^|[\n]{2})((>|&gt;)\s(.*))([\n]{2}|$)/gui, '$1<blockquote>$4</blockquote>\n\n');
+	proc = proc.replace(/(^|[\n]{2})((>|&gt;)\s)/gui, '$1<blockquote>');
+	proc = proc.replace(/(^|\n)(((>|&gt;)\s.*)[\n]{2})/gui, '$1$3\n</blockquote>\n\n');
+	proc = proc.replace(/(^|[\n])(>|&gt;)\s(.*)/gui, '$1$3');
 
 	return proc;
 };
