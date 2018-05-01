@@ -285,6 +285,19 @@ const fetchApiData = async () => {
 	}
 };
 
+const customPageBlock = (title, content) => {
+	const rootContainer = document.getElementById('root');
+	const pageBlock = document.createElement('div');
+
+	pageBlock.className = 'custom-block';
+	pageBlock.innerHTML = (`
+		<div class="custom-block__title">${title()}</div>
+		<div class="custom-block__content">${content()}</div>
+	`);
+
+	rootContainer.appendChild(pageBlock);
+};
+
 const renderAuthorBlock = (githubAuthor) => {
 	if (!globals.disabled.author) {
 		const rootContainer = document.getElementById('root');
@@ -593,8 +606,6 @@ const markdownProcessing = (source) => {
 	proc = proc.replace(/(^|[^#])#### (.*)/gui, '$1<h4>$2</h4>');
 	proc = proc.replace(/(^|[^#])##### (.*)/gui, '$1<h5>$2</h5>');
 	proc = proc.replace(/(^|[^#])###### (.*)/gui, '$1<h6>$2</h6>');
-	proc = proc.replace(/(^|[\n]{2})(.*)\n[=]{1,}/gui, '$1<h1>$2</h1>');
-	proc = proc.replace(/(^|[\n]{2})(.*)\n[-]{1,}/gui, '$1<h2>$2</h2>');
 
 	// Images and links
 	proc = proc.replace(/!\[(.*)\]\((http[s]?:[\/]{2}([^\s]+))([\s]?"(.*)")?\)/gui, '<img src="$2" alt="$1" title="$5" />');

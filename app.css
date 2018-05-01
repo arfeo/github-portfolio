@@ -178,7 +178,8 @@ a:hover {
 
 .bio,
 .projects,
-.starred {
+.starred,
+.custom-block {
 	z-index: 1;
 	display: flex;
 	align-items: baseline;
@@ -189,8 +190,17 @@ a:hover {
 	font-weight: 100;
 }
 
+.custom-block__content {
+	z-index: 1;
+	display: flex;
+	align-items: baseline;
+	font-size: 15px;
+	font-weight: 100;
+}
+
 .projects__title,
-.starred__title {
+.starred__title,
+.custom-block__title {
 	display: flex;
 	align-items: top;
 	width: 160px;
