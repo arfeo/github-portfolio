@@ -608,8 +608,8 @@ const markdownProcessing = (source) => {
 	proc = proc.replace(/(^|[^#])###### (.*)/gui, '$1<h6>$2</h6>');
 
 	// Images and links
-	proc = proc.replace(/!\[(.*)\]\((http[s]?:[\/]{2}([^\s]+))([\s]?"(.*)")?\)/gui, '<img src="$2" alt="$1" title="$5" />');
-	proc = proc.replace(/([^!])\[(.*)\]\((http[s]?:[\/]{2}([^\s]+))[^\)]?\)/gui, '$1<a href="$3" target="_blank">$2</a>');
+	proc = proc.replace(/!\[([^\]]*?)\]\(((?:.)*?)\)/gui, '<img src="$2" alt="$1" title="$5" />');
+	proc = proc.replace(/(\[([^\]]*?)\])\(((?:.)*?)\)/gui, '<a href="$3" target="_blank">$2</a>');
 	proc = proc.replace(/([\(\s)]+)(http[s]?:[\/]{2}[^\s]+)/gui, '$1<a href="$2" target="_blank">$2</a>');
 
 	// Text
