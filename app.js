@@ -234,6 +234,16 @@ const constants = {
 	},
 };
 
+const sortArrayByKey = (arr, key) => {
+    const buffer = arr;
+
+    buffer.sort((a, b) => {
+    	return b[key] - a[key];
+    });
+
+    return buffer;
+};
+
 const apiData = (url, data) => {
 	return new Promise((resolve, reject) => {
 		const params = Object.entries(data).map(([key, val]) => `${key}=${val}`).join('&');
@@ -346,19 +356,21 @@ const renderBioBlock = (githubAuthor) => {
 };
 
 const renderReposList = (githubRepos) => {
+	let mostUsedLanguages = [];
+
 	if (!globals.disabled.projects) {
 		const rootContainer = document.getElementById('root');
+		const projectsTitle = document.createElement('div');
+		const reposLanguages = document.createElement('div');
+		const projectsContainer = document.createElement('div');
+		const reposDock = document.createElement('div');
 
 		// Render block container
-		const projectsContainer = document.createElement('div');
-
 		projectsContainer.className = 'projects';
 
 		rootContainer.appendChild(projectsContainer);
 
 		// Set block title
-		const projectsTitle = document.createElement('div');
-
 		projectsTitle.className = 'projects__title';
 
 		projectsContainer.appendChild(projectsTitle);
@@ -367,11 +379,14 @@ const renderReposList = (githubRepos) => {
 			let reposCount = 0;
 
 			// Render repos dock
-			const reposDock = document.createElement('div');
-
 			reposDock.className = 'projects__dock';
 
 			projectsContainer.appendChild(reposDock);
+
+			// Languages count
+			reposLanguages.className = 'projects__laguages';
+
+			reposDock.appendChild(reposLanguages);
 
 			for (let i = 0; i < githubRepos.length; i++) {
 				const name = githubRepos[i].name;
@@ -411,6 +426,16 @@ const renderReposList = (githubRepos) => {
 					repoInfo.appendChild(repoServiceBlock);
 
 					if (language) {
+						const languageCounter = mostUsedLanguages.filter(el => el.language === language);
+
+						if (!languageCounter.length) {
+							mostUsedLanguages.push({
+								language,
+								count: 1,
+							});
+						} else {
+							languageCounter[0].count += 1;
+						}
 
 						// Repo language
 						const repoLanguage = document.createElement('div');
@@ -473,6 +498,26 @@ const renderReposList = (githubRepos) => {
 				cnt.innerHTML = reposCount;
 
 				projectsTitle.appendChild(cnt);
+			}
+
+			if (reposCount > 0 && mostUsedLanguages.length > 0) {
+				const b = sortArrayByKey(mostUsedLanguages, 'count');
+
+				// Render languages counter
+				reposLanguages.style.display = 'flex';
+
+				for (l of b) {
+					const langCounter = document.createElement('div');
+					const zoom = Math.ceil(l.count * 100 / reposCount) / 10 / b[b.length - 1].count;
+
+					langCounter.className = 'count';
+					langCounter.innerHTML = (`
+						<div class="icon" style="zoom: ${zoom}; background-color:${constants.colors[l.language]}"></div>
+						<div class="name">${l.language}</div>
+					`);
+
+					reposLanguages.appendChild(langCounter);
+				}
 			}
 		} else {
 			projectsContainer.appendChild(document.createTextNode('No repos found.'));
