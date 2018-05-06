@@ -224,9 +224,11 @@ a:hover {
 
 .projects__laguages {
 	display: none;
-	flex-wrap: wrap;
 	align-items: center;
 	width: 100%;
+	max-width: calc(100vw - 200px);
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .projects__laguages .count {

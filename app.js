@@ -500,7 +500,7 @@ const renderReposList = (githubRepos) => {
 				projectsTitle.appendChild(cnt);
 			}
 
-			if (reposCount > 0 && mostUsedLanguages.length > 0) {
+			if (mostUsedLanguages.length > 0) {
 				const b = sortArrayByKey(mostUsedLanguages, 'count');
 
 				// Render languages counter
@@ -512,11 +512,13 @@ const renderReposList = (githubRepos) => {
 
 					langCounter.className = 'count';
 					langCounter.innerHTML = (`
-						<div class="icon" style="zoom: ${zoom}; background-color:${constants.colors[l.language]}"></div>
+						<div class="icon" title="${l.count}" style="zoom: ${zoom}; background-color:${constants.colors[l.language]}"></div>
 						<div class="name">${l.language}</div>
 					`);
 
 					reposLanguages.appendChild(langCounter);
+
+					projectsTitle.style.marginTop = (reposLanguages.offsetHeight / 2 - 28) + 'px';
 				}
 			}
 		} else {
