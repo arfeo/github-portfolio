@@ -250,10 +250,10 @@ a:hover {
 
 .projects__info {
 	position: relative;
-	width: 27%;
-	min-width: 320px;
+	width: 28%;
+	min-width: 290px;
 	border: 1px solid #d1d5da;
-	margin-right: 3%;
+	margin-right: 2%;
 	margin-bottom: 20px;
 	padding: 15px 15px 45px;
 	border-radius: 3px;
@@ -309,9 +309,9 @@ a:hover {
 }
 
 .starred__info {
-	width: calc(27% + 30px);
-	min-width: 350px;
-	margin-right: calc(3% + 5px);
+	width: calc(28% + 32px);
+	min-width: 322px;
+	margin-right: 2%;
 	margin-bottom: 20px;
 }
 
