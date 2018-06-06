@@ -509,10 +509,11 @@ const renderReposList = (githubRepos) => {
 				for (l of b) {
 					const langCounter = document.createElement('div');
 					const zoom = Math.ceil(l.count * 100 / reposCount) / 10 / b[b.length - 1].count;
+					const iconSize = Math.floor(14 * zoom);
 
 					langCounter.className = 'count';
 					langCounter.innerHTML = (`
-						<div class="icon" title="${l.count}" style="zoom: ${zoom}; background-color:${constants.colors[l.language]}"></div>
+						<div class="icon" title="${l.count}" style="width: ${iconSize}px; height: ${iconSize}px; border-radius: ${iconSize / 2}px; background-color:${constants.colors[l.language]}"></div>
 						<div class="name">${l.language}</div>
 					`);
 
