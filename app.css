@@ -85,14 +85,14 @@ a:hover {
 .layer-body h3,
 .layer-body h4,
 .layer-body h5,
-.layer-body h6, {
+.layer-body h6 {
 	margin: 10em 0;
 }
 
 .layer-body code {
 	border: 1px solid #ddd;
 	margin: 0 2px;
-    padding: 0px 5px;
+    padding: 0 5px;
     background-color: #f8f8f8;
     border-radius: 3px;
 	white-space: nowrap;
@@ -182,7 +182,6 @@ a:hover {
 .custom-block {
 	z-index: 1;
 	display: flex;
-	align-items: top;
 	margin-top: 20px;
 	margin-bottom: 40px;
 	padding: 0 20px;
@@ -202,7 +201,6 @@ a:hover {
 .starred__title,
 .custom-block__title {
 	display: flex;
-	align-items: top;
 	width: 160px;
 	min-width: 160px;
 	font-size: 24px;
@@ -222,7 +220,7 @@ a:hover {
 	flex-wrap: wrap;
 }
 
-.projects__laguages {
+.projects__languages {
 	display: none;
 	align-items: center;
 	width: 100%;
@@ -231,20 +229,20 @@ a:hover {
 	text-overflow: ellipsis;
 }
 
-.projects__laguages .count {
+.projects__languages .count {
 	display: flex;
 	align-items: center;
 	margin: 7px 30px 30px 0;
 }
 
-.projects__laguages .count .icon {
+.projects__languages .count .icon {
 	width: 14px;
 	height: 14px;
 	background-color: black;
 	border-radius: 7px;
 }
 
-.projects__laguages .count .name {
+.projects__languages .count .name {
 	margin-left: 7px;
 }
 
@@ -304,7 +302,7 @@ a:hover {
 
 .starred__dock {
 	display: flex;
-	justify-content: baseline;
+	justify-content: flex-start;
 	flex-wrap: wrap;
 }
 
