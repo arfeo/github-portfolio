@@ -80,21 +80,12 @@ a:hover {
 	margin: 1em 0;
 }
 
-.layer-body h1,
-.layer-body h2,
-.layer-body h3,
-.layer-body h4,
-.layer-body h5,
-.layer-body h6 {
-	margin: 10em 0;
-}
-
 .layer-body code {
 	border: 1px solid #ddd;
 	margin: 0 2px;
-    padding: 0 5px;
-    background-color: #f8f8f8;
-    border-radius: 3px;
+	padding: 0 5px;
+	background-color: #f8f8f8;
+	border-radius: 3px;
 	white-space: nowrap;
 }
 
