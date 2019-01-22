@@ -694,6 +694,6 @@ class GitHubPortfolio {
   };
 }
 
-window.onload = async () => {
+window.onload = () => {
   new GitHubPortfolio();
 };
