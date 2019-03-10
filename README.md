@@ -2,7 +2,7 @@
 
 A self-hosted portfolio engine based on a public GitHub profile.
 
-Live example: http://arfeo.net
+Live example: https://arfeo.net
 
 ![Interface](http://static.arfeo.net/github-portfolio/interface.png)
 
