@@ -521,7 +521,7 @@ class GitHubPortfolio {
 
       reposLanguages.appendChild(langCounter);
 
-      projectsTitle.style.marginTop = (reposLanguages.offsetHeight / 2 - 28) + 'px';
+      projectsTitle.style.marginTop = `${(reposLanguages.offsetHeight / 2 - 28)}px`;
     }
   }
 
@@ -541,7 +541,7 @@ class GitHubPortfolio {
     `);
 
     document.body.appendChild(layerContainer);
-    document.body.setAttribute('style','overflow: hidden');
+    document.body.style.overflow = 'hidden';
 
     const keyDownHandler = (event) => {
       if (event.key === 'Escape') {
@@ -550,7 +550,7 @@ class GitHubPortfolio {
     };
 
     const removeModal = () => {
-      document.body.setAttribute('style','overflow: auto');
+      document.body.style.overflow = 'auto';
       layerContainer.remove();
       window.removeEventListener('keydown', keyDownHandler);
     };
