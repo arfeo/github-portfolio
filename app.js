@@ -315,8 +315,8 @@ class GitHubPortfolio {
       return { githubAuthor, githubRepos, githubStarred };
     } catch (err) {
       this.rootContainer.innerHTML = (`
-				<div class="error">Error fetching API data: ${err}</div>
-			`);
+        <div class="error">Error fetching API data: ${err}</div>
+      `);
     }
   };
 
@@ -325,9 +325,9 @@ class GitHubPortfolio {
 
     pageBlock.className = 'custom-block';
     pageBlock.innerHTML = (`
-			<div class="custom-block__title">${title()}</div>
-			<div class="custom-block__content">${content()}</div>
-		`);
+      <div class="custom-block__title">${title()}</div>
+      <div class="custom-block__content">${content()}</div>
+    `);
 
     this.rootContainer.appendChild(pageBlock);
   };
@@ -424,10 +424,10 @@ class GitHubPortfolio {
 
             repoInfo.className = 'projects__info';
             repoInfo.innerHTML = (`
-							<div class="projects__info-name">
-								<a href="${url}">${name}</a>
-							</div>
-						`);
+              <div class="projects__info-name">
+                <a href="${url}">${name}</a>
+              </div>
+            `);
             reposDock.appendChild(repoInfo);
 
             // Repo description
@@ -461,11 +461,11 @@ class GitHubPortfolio {
 
               repoLanguage.className = 'projects__info-language';
               repoLanguage.innerHTML = (`
-								<div class="projects__info-language-icon" style="background-color:${COLORS[language]}"></div>
-								<div class="projects__info-language-name">
-									${language}
-								</div>
-							`);
+                <div class="projects__info-language-icon" style="background-color:${COLORS[language]}"></div>
+                <div class="projects__info-language-name">
+                  ${language}
+                </div>
+              `);
               repoServiceBlock.appendChild(repoLanguage);
 
               // Repo readme
@@ -473,8 +473,8 @@ class GitHubPortfolio {
 
               repoReadme.className = 'projects__info-readme';
               repoReadme.innerHTML = (`
-								<span class="pseudolink">Readme</span>
-							`);
+                <span class="pseudolink">Readme</span>
+              `);
               repoServiceBlock.appendChild(repoReadme);
 
               // Repo readme modal
@@ -486,12 +486,12 @@ class GitHubPortfolio {
 
                 layerContainer.className = 'layer-container';
                 layerContainer.innerHTML = (`
-									<div class="layer-backdrop"></div>
-									<div class="layer-modal">
-										<div id="layer-close" class="layer-close">✕</div>
-										<div class="layer-body">${GitHubPortfolio.markdownProcessing(readme)}</div>
-									</div>
-								`);
+                  <div class="layer-backdrop"></div>
+                  <div class="layer-modal">
+                    <div id="layer-close" class="layer-close">✕</div>
+                    <div class="layer-body">${GitHubPortfolio.markdownProcessing(readme)}</div>
+                  </div>
+                `);
                 document.body.appendChild(layerContainer);
 
                 document.getElementById('layer-close').addEventListener('click', () => {
@@ -528,9 +528,9 @@ class GitHubPortfolio {
 
             langCounter.className = 'count';
             langCounter.innerHTML = (`
-							<div class="icon" title="${l.count}" style="width: ${iconSize}px; height: ${iconSize}px; border-radius: ${iconSize / 2}px; background-color:${COLORS[l.language]}"></div>
-							<div class="name">${l.language}</div>
-						`);
+              <div class="icon" title="${l.count}" style="width: ${iconSize}px; height: ${iconSize}px; border-radius: ${iconSize / 2}px; background-color:${COLORS[l.language]}"></div>
+              <div class="name">${l.language}</div>
+            `);
             reposLanguages.appendChild(langCounter);
 
             projectsTitle.style.marginTop = (reposLanguages.offsetHeight / 2 - 28) + 'px';
@@ -582,10 +582,10 @@ class GitHubPortfolio {
 
             starredInfo.className = 'starred__info';
             starredInfo.innerHTML = (`
-							<div class="starred__info-name">
-								<a href="${url}">${name}</a>
-							</div>
-						`);
+              <div class="starred__info-name">
+                <a href="${url}">${name}</a>
+              </div>
+            `);
             starredDock.appendChild(starredInfo);
 
             // Starred description
@@ -603,11 +603,11 @@ class GitHubPortfolio {
 
               starredLanguage.className = 'starred__info-language';
               starredLanguage.innerHTML = (`
-								<div class="starred__info-language-icon" style="background-color:${COLORS[language]}"></div>
-								<div class="starred__info-language-name">
-									${language}
-								</div>
-							`);
+                <div class="starred__info-language-icon" style="background-color:${COLORS[language]}"></div>
+                <div class="starred__info-language-name">
+                  ${language}
+                </div>
+              `);
               starredInfo.appendChild(starredLanguage);
             }
           }
