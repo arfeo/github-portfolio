@@ -421,6 +421,7 @@ class GitHubPortfolio {
           repoInfo.innerHTML = (`
             <div class="projects__info-name">
               <a href="${url}">${name}</a>
+              ${githubRepos[i].archived ? '<div class="projects__info-archived">Archived</div>' : ''}
             </div>
           `);
           reposDock.appendChild(repoInfo);

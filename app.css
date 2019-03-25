@@ -253,6 +253,27 @@ a:hover {
 	font-weight: 400;
 }
 
+.projects__info-name {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.projects__info-archived {
+	display: inline-block;
+	background-color: transparent;
+	border: 1px solid rgba(27,31,35,.15);
+	border-radius: 2px;
+	box-shadow: none;
+	margin-bottom: -1px;
+	margin-top: -1px;
+	padding: 3px 4px;
+	line-height: 1;
+	color: #586069;
+	font-size: 12px;
+	font-weight: 400;
+}
+
 .projects__info-description,
 .starred__info-description {
 	margin-top: 5px;
