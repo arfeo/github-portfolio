@@ -200,31 +200,50 @@ const COLORS = {
 };
 
 class GitHubPortfolio {
-  constructor(author = 'github', api = 'https://api.github.com') {
-    this.author = author;
-    this.api = api;
+  constructor(author, api, options = {}, root) {
+    this.rootContainer = root || document.getElementById('root');
+    this.author = author || 'github';
+    this.api = api || 'https://api.github.com';
 
-    this.exceptions = []; // Do not show the following repos in the projects list
-
-    this.counters = { // Show or hide counters
-      projects: false,
-      starred: false,
+    this.options = {
+      exceptions: [],
+      counters: {
+        projects: false,
+        starred: false,
+      },
+      disabled: {
+        author: false,
+        bio: false,
+        projects: false,
+        starred: false,
+        copyright: false,
+      },
+      limit: {
+        repos: 100,
+        starred: 100,
+      },
     };
 
-    this.disabled = { // Page blocks to be disabled
-      author: false,
-      bio: false,
-      projects: false,
-      starred: false,
-      copyright: false,
-    };
+    // Parse `options` parameter (if passed)
+    const optionsGroups = Object.keys(options);
 
-    this.limit = { // Items quantity each page returns
-      repos: 100,
-      starred: 100,
-    };
+    for (const group of optionsGroups) {
+      if (Array.isArray(options[group])) {
+        this.options[group] = options[group];
+      } else {
+        const optionsGroupKeys = Object.keys(options[group]);
 
-    this.rootContainer = document.getElementById('root');
+        for (const groupKey of optionsGroupKeys) {
+          this.options = {
+            ...this.options,
+            [group]: {
+              ...this.options[group],
+              [groupKey]: options[group][groupKey],
+            },
+          };
+        }
+      }
+    }
 
     return this.render();
   }
@@ -276,6 +295,7 @@ class GitHubPortfolio {
   };
 
   async fetchApiData() {
+    const { limit } = this.options;
     let githubAuthor = [];
     let githubRepos = [];
     let githubStarred = [];
@@ -284,8 +304,8 @@ class GitHubPortfolio {
     try {
       const [a, r, s] = await Promise.all([
         this.apiData(`${this.api}/users/${this.author}`),
-        this.apiData(`${this.api}/users/${this.author}/repos?per_page=${this.limit.repos}`),
-        this.apiData(`${this.api}/users/${this.author}/starred?per_page=${this.limit.starred}`),
+        this.apiData(`${this.api}/users/${this.author}/repos?per_page=${limit.repos}`),
+        this.apiData(`${this.api}/users/${this.author}/starred?per_page=${limit.starred}`),
       ]);
 
       githubAuthor = JSON.parse(a);
@@ -313,53 +333,58 @@ class GitHubPortfolio {
   };
 
   renderAuthorBlock(githubAuthor) {
-    if (!this.disabled.author) {
-      const authorContainer = document.createElement('div');
-
-      authorContainer.className = 'author';
-      authorContainer.innerHTML = (`
-				<div class="author__avatar-dock">
-					<img src="${githubAuthor.avatar_url}" class="author__avatar" alt="" />
-				</div>
-				<div class="author__info-dock">
-					<div class="author__name">
-						${githubAuthor.name}
-					</div>
-					<div class="author__url">
-						<a href="${githubAuthor.html_url}">${githubAuthor.html_url}</a>
-					</div>
-				</div>
-			`);
-
-      this.rootContainer.appendChild(authorContainer);
-
-      // Set page title
-      const pageTitle = document.getElementsByTagName('title');
-
-      pageTitle[0].innerHTML = `${githubAuthor.name} (${githubAuthor.login})`;
-      document.body.style.paddingTop = '180px';
+    if (this.options.disabled.author) {
+      return;
     }
+
+    const authorContainer = document.createElement('div');
+
+    authorContainer.className = 'author';
+    authorContainer.innerHTML = (`
+      <div class="author__avatar-dock">
+        <img src="${githubAuthor.avatar_url}" class="author__avatar" alt="" />
+      </div>
+      <div class="author__info-dock">
+        <div class="author__name">
+          ${githubAuthor.name}
+        </div>
+        <div class="author__url">
+          <a href="${githubAuthor.html_url}">${githubAuthor.html_url}</a>
+        </div>
+      </div>
+    `);
+
+    this.rootContainer.appendChild(authorContainer);
+
+    // Set page title
+    const pageTitle = document.getElementsByTagName('title');
+
+    pageTitle[0].innerHTML = `${githubAuthor.name} (${githubAuthor.login})`;
+    document.body.style.paddingTop = '180px';
   };
 
   renderBioBlock(githubAuthor) {
-    if (!this.disabled.bio) {
-      const bioContainer = document.createElement('div');
-
-      bioContainer.className = 'bio';
-      bioContainer.innerHTML = (`
-				<div class="bio__dock">
-					${githubAuthor.bio ? githubAuthor.bio : 'Bio is empty.'}
-				</div>
-			`);
-
-      this.rootContainer.appendChild(bioContainer);
+    if (this.options.disabled.bio) {
+      return;
     }
+
+    const bioContainer = document.createElement('div');
+
+    bioContainer.className = 'bio';
+    bioContainer.innerHTML = (`
+      <div class="bio__dock">
+        ${githubAuthor.bio ? githubAuthor.bio : 'Bio is empty.'}
+      </div>
+    `);
+
+    this.rootContainer.appendChild(bioContainer);
   };
 
   renderReposList(githubRepos) {
+    const { counters, disabled, exceptions, limit } = this.options;
     let mostUsedLanguages = [];
 
-    if (!this.disabled.projects) {
+    if (!disabled.projects) {
       const projectsTitle = document.createElement('div');
       const reposLanguages = document.createElement('div');
       const projectsContainer = document.createElement('div');
@@ -391,7 +416,7 @@ class GitHubPortfolio {
           const description = githubRepos[i].description;
           const language = githubRepos[i].language;
 
-          if (this.exceptions.indexOf(name) === -1) {
+          if (exceptions.indexOf(name) === -1 && reposCount < limit.repos) {
             reposCount++;
 
             // Render repo info container
@@ -482,7 +507,7 @@ class GitHubPortfolio {
         projectsTitle.innerHTML = 'Projects';
 
         // Render repos counter
-        if (reposCount > 0 && this.counters.projects) {
+        if (reposCount > 0 && counters.projects) {
           const cnt = document.createElement('div');
 
           cnt.className = 'projects__title-counter';
@@ -518,7 +543,9 @@ class GitHubPortfolio {
   };
 
   renderStarredList(githubStarred) {
-    if (!this.disabled.starred) {
+    const { disabled, limit } = this.options;
+
+    if (!disabled.starred) {
       // Render block container
       const starredContainer = document.createElement('div');
 
@@ -532,7 +559,7 @@ class GitHubPortfolio {
       starredTitle.className = 'starred__title';
       starredContainer.appendChild(starredTitle);
 
-      if (githubStarred && githubStarred.length > 0 && this.limit.starred > 0) {
+      if (githubStarred && githubStarred.length > 0 && limit.starred > 0) {
         let starredCount = 0;
 
         // Render starred dock
@@ -547,7 +574,7 @@ class GitHubPortfolio {
           const description = githubStarred[i].description;
           const language = githubStarred[i].language;
 
-          if (starredCount < this.limit.starred) {
+          if (starredCount < limit.starred) {
             starredCount++;
 
             // Render starred info container
@@ -595,7 +622,7 @@ class GitHubPortfolio {
         starredTitle.innerHTML = 'Starred';
 
         // Render starred counter
-        if (this.counters.starred) {
+        if (this.options.counters.starred) {
           const cnt = document.createElement('div');
 
           cnt.className = 'starred__title-counter';
@@ -609,19 +636,21 @@ class GitHubPortfolio {
   };
 
   renderCopyright(githubAuthor) {
-    if (!this.disabled.copyright) {
-      const copyrightContainer = document.createElement('div');
-
-      copyrightContainer.className = 'copyright';
-      copyrightContainer.innerHTML = `Copyright © ${(new Date()).getFullYear()} ${githubAuthor.name} & GitHub, Inc.`;
-
-      this.rootContainer.appendChild(copyrightContainer);
+    if (this.options.disabled.copyright) {
+      return;
     }
+
+    const copyrightContainer = document.createElement('div');
+
+    copyrightContainer.className = 'copyright';
+    copyrightContainer.innerHTML = `Copyright © ${(new Date()).getFullYear()} ${githubAuthor.name} & GitHub, Inc.`;
+
+    this.rootContainer.appendChild(copyrightContainer);
   };
 
   setEventHandlers() {
     window.addEventListener('scroll', () => {
-      if (!this.disabled.author) {
+      if (!this.options.disabled.author) {
         const top = window.pageYOffset || document.documentElement.scrollTop;
         const authorContainer = document.querySelector('.author');
         const authorAvatar = document.querySelector('.author__avatar');
