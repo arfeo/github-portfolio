@@ -720,6 +720,10 @@ class GitHubPortfolio {
     proc = proc.replace(/[`]{3}.*?\n([^`]+)[`]{3}/gui, '<pre>$1</pre>');
     proc = proc.replace(/(^|[\n]{2})(([\s]{4}.*)+)/gui, '$1<pre>$2</pre>');
 
+    // Checkboxes
+    proc = proc.replace(/(^|[\n])[\-]{1}\s\[\s\](.*)/gui, '$1<input type="checkbox" disabled>$2');
+    proc = proc.replace(/(^|[\n])[\-]{1}\s\[x\](.*)/gui, '$1<input type="checkbox" checked disabled>$2');
+
     // Lists
     proc = proc.replace(/(^|[\n]{2})([\*|\-|\+]\s)/gui, '$1<ul>\n$2');
     proc = proc.replace(/(^|[\n]{2})(\d\.\s)/gui, '$1<ol>\n$2');
