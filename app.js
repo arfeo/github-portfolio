@@ -200,9 +200,9 @@ const COLORS = {
 };
 
 class GitHubPortfolio {
-  constructor(author, api, options = {}) {
+  constructor(author, options = {}) {
     this.author = author || 'github';
-    this.api = api || 'https://api.github.com';
+    this.api = 'https://api.github.com';
     this.rootContainer = document.getElementById('root');
 
     this.options = {
