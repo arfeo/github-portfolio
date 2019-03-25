@@ -543,10 +543,20 @@ class GitHubPortfolio {
     document.body.appendChild(layerContainer);
     document.body.setAttribute('style','overflow: hidden');
 
-    document.getElementById('layer-close').addEventListener('click', () => {
+    const keyDownHandler = (event) => {
+      if (event.key === 'Escape') {
+        removeModal();
+      }
+    };
+
+    const removeModal = () => {
       document.body.setAttribute('style','overflow: auto');
       layerContainer.remove();
-    });
+      window.removeEventListener('keydown', keyDownHandler);
+    };
+
+    document.getElementById('layer-close').addEventListener('click', removeModal);
+    window.addEventListener('keydown', keyDownHandler);
   }
 
   renderStarredList(githubStarred) {
