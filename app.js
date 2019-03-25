@@ -200,10 +200,10 @@ const COLORS = {
 };
 
 class GitHubPortfolio {
-  constructor(author, api, options = {}, root) {
-    this.rootContainer = root || document.getElementById('root');
+  constructor(author, api, options = {}) {
     this.author = author || 'github';
     this.api = api || 'https://api.github.com';
+    this.rootContainer = document.getElementById('root');
 
     this.options = {
       exceptions: [],
@@ -266,7 +266,7 @@ class GitHubPortfolio {
     buffer.sort((a, b) => b[key] - a[key]);
 
     return buffer;
-  };
+  }
 
   apiData(url, data = {}) {
     return new Promise((resolve, reject) => {
@@ -292,7 +292,7 @@ class GitHubPortfolio {
 
       xhr.send();
     });
-  };
+  }
 
   async fetchApiData() {
     const { limit } = this.options;
@@ -318,22 +318,12 @@ class GitHubPortfolio {
         <div class="error">Error fetching API data: ${err}</div>
       `);
     }
-  };
-
-  customPageBlock(title, content) {
-    const pageBlock = document.createElement('div');
-
-    pageBlock.className = 'custom-block';
-    pageBlock.innerHTML = (`
-      <div class="custom-block__title">${title()}</div>
-      <div class="custom-block__content">${content()}</div>
-    `);
-
-    this.rootContainer.appendChild(pageBlock);
-  };
+  }
 
   renderAuthorBlock(githubAuthor) {
-    if (this.options.disabled.author) {
+    const { disabled } = this.options;
+
+    if (disabled.author) {
       return;
     }
 
@@ -361,10 +351,12 @@ class GitHubPortfolio {
 
     pageTitle[0].innerHTML = `${githubAuthor.name} (${githubAuthor.login})`;
     document.body.style.paddingTop = '180px';
-  };
+  }
 
   renderBioBlock(githubAuthor) {
-    if (this.options.disabled.bio) {
+    const { disabled } = this.options;
+
+    if (disabled.bio) {
       return;
     }
 
@@ -378,265 +370,284 @@ class GitHubPortfolio {
     `);
 
     this.rootContainer.appendChild(bioContainer);
-  };
+  }
 
   renderReposList(githubRepos) {
     const { counters, disabled, exceptions, limit } = this.options;
+
+    if (disabled.projects) {
+      return;
+    }
+
+    const projectsTitle = document.createElement('div');
+    const reposLanguages = document.createElement('div');
+    const projectsContainer = document.createElement('div');
+    const reposDock = document.createElement('div');
     let mostUsedLanguages = [];
 
-    if (!disabled.projects) {
-      const projectsTitle = document.createElement('div');
-      const reposLanguages = document.createElement('div');
-      const projectsContainer = document.createElement('div');
-      const reposDock = document.createElement('div');
+    // Render block container
+    projectsContainer.className = 'projects';
 
-      // Render block container
-      projectsContainer.className = 'projects';
+    this.rootContainer.appendChild(projectsContainer);
 
-      this.rootContainer.appendChild(projectsContainer);
+    // Set block title
+    projectsTitle.className = 'projects__title';
+    projectsContainer.appendChild(projectsTitle);
 
-      // Set block title
-      projectsTitle.className = 'projects__title';
-      projectsContainer.appendChild(projectsTitle);
+    if (githubRepos && githubRepos.length > 0) {
+      let reposCount = 0;
 
-      if (githubRepos && githubRepos.length > 0) {
-        let reposCount = 0;
+      // Render repos dock
+      reposDock.className = 'projects__dock';
+      projectsContainer.appendChild(reposDock);
 
-        // Render repos dock
-        reposDock.className = 'projects__dock';
-        projectsContainer.appendChild(reposDock);
+      // Languages count
+      reposLanguages.className = 'projects__languages';
+      reposDock.appendChild(reposLanguages);
 
-        // Languages count
-        reposLanguages.className = 'projects__languages';
-        reposDock.appendChild(reposLanguages);
+      for (let i = 0; i < githubRepos.length; i++) {
+        const name = githubRepos[i].name;
+        const url = githubRepos[i].html_url;
+        const description = githubRepos[i].description;
+        const language = githubRepos[i].language;
 
-        for (let i = 0; i < githubRepos.length; i++) {
-          const name = githubRepos[i].name;
-          const url = githubRepos[i].html_url;
-          const description = githubRepos[i].description;
-          const language = githubRepos[i].language;
+        if (exceptions.indexOf(name) === -1 && reposCount < limit.repos) {
+          reposCount++;
 
-          if (exceptions.indexOf(name) === -1 && reposCount < limit.repos) {
-            reposCount++;
+          // Render repo info container
+          const repoInfo = document.createElement('div');
 
-            // Render repo info container
-            const repoInfo = document.createElement('div');
+          repoInfo.className = 'projects__info';
+          repoInfo.innerHTML = (`
+            <div class="projects__info-name">
+              <a href="${url}">${name}</a>
+            </div>
+          `);
+          reposDock.appendChild(repoInfo);
 
-            repoInfo.className = 'projects__info';
-            repoInfo.innerHTML = (`
-              <div class="projects__info-name">
-                <a href="${url}">${name}</a>
-              </div>
-            `);
-            reposDock.appendChild(repoInfo);
+          // Repo description
+          if (description) {
+            const repoDescription = document.createElement('div');
 
-            // Repo description
-            if (description) {
-              const repoDescription = document.createElement('div');
+            repoDescription.className = 'projects__info-description';
+            repoDescription.innerHTML = description;
+            repoInfo.appendChild(repoDescription);
+          }
 
-              repoDescription.className = 'projects__info-description';
-              repoDescription.innerHTML = description;
-              repoInfo.appendChild(repoDescription);
-            }
+          const repoServiceBlock = document.createElement('div');
 
-            const repoServiceBlock = document.createElement('div');
+          repoServiceBlock.className = 'projects__info-service-block';
+          repoInfo.appendChild(repoServiceBlock);
 
-            repoServiceBlock.className = 'projects__info-service-block';
-            repoInfo.appendChild(repoServiceBlock);
+          if (language) {
+            const languageCounter = mostUsedLanguages.filter(el => el.language === language);
 
-            if (language) {
-              const languageCounter = mostUsedLanguages.filter(el => el.language === language);
-
-              if (!languageCounter.length) {
-                mostUsedLanguages.push({
-                  language,
-                  count: 1,
-                });
-              } else {
-                languageCounter[0].count += 1;
-              }
-
-              // Repo language
-              const repoLanguage = document.createElement('div');
-
-              repoLanguage.className = 'projects__info-language';
-              repoLanguage.innerHTML = (`
-                <div class="projects__info-language-icon" style="background-color:${COLORS[language]}"></div>
-                <div class="projects__info-language-name">
-                  ${language}
-                </div>
-              `);
-              repoServiceBlock.appendChild(repoLanguage);
-
-              // Repo readme
-              const repoReadme = document.createElement('div');
-
-              repoReadme.className = 'projects__info-readme';
-              repoReadme.innerHTML = (`
-                <span class="pseudolink">Readme</span>
-              `);
-              repoServiceBlock.appendChild(repoReadme);
-
-              // Repo readme modal
-              repoReadme.addEventListener('click', async () => {
-                const layerContainer = document.createElement('div');
-                const readme = await this.apiData(
-                  `https://raw.githubusercontent.com/${this.author}/${githubRepos[i].name}/master/README.md`,
-                ).catch(() => 'No description provided.');
-
-                layerContainer.className = 'layer-container';
-                layerContainer.innerHTML = (`
-                  <div class="layer-backdrop"></div>
-                  <div class="layer-modal">
-                    <div id="layer-close" class="layer-close">✕</div>
-                    <div class="layer-body">${GitHubPortfolio.markdownProcessing(readme)}</div>
-                  </div>
-                `);
-                document.body.appendChild(layerContainer);
-
-                document.getElementById('layer-close').addEventListener('click', () => {
-                  layerContainer.remove();
-                });
+            if (!languageCounter.length) {
+              mostUsedLanguages.push({
+                language,
+                count: 1,
               });
             } else {
-              repoInfo.style.paddingBottom = '15px';
+              languageCounter[0].count += 1;
             }
-          }
-        }
 
-        projectsTitle.innerHTML = 'Projects';
+            // Repo language
+            const repoLanguage = document.createElement('div');
 
-        // Render repos counter
-        if (reposCount > 0 && counters.projects) {
-          const cnt = document.createElement('div');
-
-          cnt.className = 'projects__title-counter';
-          cnt.innerHTML = reposCount.toString();
-          projectsTitle.appendChild(cnt);
-        }
-
-        if (mostUsedLanguages.length > 0) {
-          const b = this.sortArrayByKey(mostUsedLanguages, 'count');
-
-          // Render languages counter
-          reposLanguages.style.display = 'flex';
-
-          for (const l of b) {
-            const langCounter = document.createElement('div');
-            const zoom = Math.ceil(l.count * 100 / reposCount) / 10 / b[b.length - 1].count;
-            const iconSize = Math.floor(14 * zoom);
-
-            langCounter.className = 'count';
-            langCounter.innerHTML = (`
-              <div class="icon" title="${l.count}" style="width: ${iconSize}px; height: ${iconSize}px; border-radius: ${iconSize / 2}px; background-color:${COLORS[l.language]}"></div>
-              <div class="name">${l.language}</div>
+            repoLanguage.className = 'projects__info-language';
+            repoLanguage.innerHTML = (`
+              <div class="projects__info-language-icon" style="background-color:${COLORS[language]}"></div>
+              <div class="projects__info-language-name">
+                ${language}
+              </div>
             `);
-            reposLanguages.appendChild(langCounter);
+            repoServiceBlock.appendChild(repoLanguage);
 
-            projectsTitle.style.marginTop = (reposLanguages.offsetHeight / 2 - 28) + 'px';
+            // Repo readme
+            const repoReadme = document.createElement('div');
+
+            repoReadme.className = 'projects__info-readme';
+            repoReadme.innerHTML = (`
+              <span class="pseudolink">Readme</span>
+            `);
+            repoServiceBlock.appendChild(repoReadme);
+
+            // Repo readme modal
+            repoReadme.addEventListener('click', () => this.openProjectReadmeModal(githubRepos[i].name));
+          } else {
+            repoInfo.style.paddingBottom = '15px';
           }
         }
-      } else {
-        projectsContainer.appendChild(document.createTextNode('No repos found.'));
       }
+
+      projectsTitle.innerHTML = 'Projects';
+
+      // Render repos counter
+      if (reposCount > 0 && counters.projects) {
+        const cnt = document.createElement('div');
+
+        cnt.className = 'projects__title-counter';
+        cnt.innerHTML = reposCount.toString();
+        projectsTitle.appendChild(cnt);
+      }
+
+      this.renderMostUsedLanguages(mostUsedLanguages, reposCount);
+    } else {
+      projectsContainer.appendChild(document.createTextNode('No repos found.'));
     }
-  };
+  }
+
+  renderMostUsedLanguages(mostUsedLanguages, reposCount) {
+    if (mostUsedLanguages.length === 0) {
+      return;
+    }
+
+    const b = this.sortArrayByKey(mostUsedLanguages, 'count');
+    const reposLanguages = document.querySelector('.projects__languages');
+    const projectsTitle = document.querySelector('.projects__title');
+
+    reposLanguages.style.display = 'flex';
+
+    for (const l of b) {
+      const langCounter = document.createElement('div');
+      const zoom = Math.ceil(l.count * 100 / reposCount) / 10 / b[b.length - 1].count;
+      const iconSize = Math.floor(14 * zoom);
+
+      langCounter.className = 'count';
+      langCounter.innerHTML = (`
+        <div class="icon" title="${l.count}" style="width: ${iconSize}px; height: ${iconSize}px; border-radius: ${iconSize / 2}px; background-color:${COLORS[l.language]}"></div>
+        <div class="name">${l.language}</div>
+      `);
+
+      reposLanguages.appendChild(langCounter);
+
+      projectsTitle.style.marginTop = (reposLanguages.offsetHeight / 2 - 28) + 'px';
+    }
+  }
+
+  async openProjectReadmeModal(repoName) {
+    const layerContainer = document.createElement('div');
+    const readme = await this.apiData(
+      `https://raw.githubusercontent.com/${this.author}/${repoName}/master/README.md`,
+    ).catch(() => 'No description provided.');
+
+    layerContainer.className = 'layer-container';
+    layerContainer.innerHTML = (`
+      <div class="layer-backdrop"></div>
+      <div class="layer-modal">
+        <div id="layer-close" class="layer-close">✕</div>
+        <div class="layer-body">${GitHubPortfolio.markdownProcessing(readme)}</div>
+      </div>
+    `);
+
+    document.body.appendChild(layerContainer);
+    document.body.setAttribute('style','overflow: hidden');
+
+    document.getElementById('layer-close').addEventListener('click', () => {
+      document.body.setAttribute('style','overflow: auto');
+      layerContainer.remove();
+    });
+  }
 
   renderStarredList(githubStarred) {
     const { disabled, limit } = this.options;
 
-    if (!disabled.starred) {
-      // Render block container
-      const starredContainer = document.createElement('div');
+    if (disabled.starred) {
+      return;
+    }
 
-      starredContainer.className = 'starred';
+    // Render block container
+    const starredContainer = document.createElement('div');
 
-      this.rootContainer.appendChild(starredContainer);
+    starredContainer.className = 'starred';
 
-      // Set block title
-      const starredTitle = document.createElement('div');
+    this.rootContainer.appendChild(starredContainer);
 
-      starredTitle.className = 'starred__title';
-      starredContainer.appendChild(starredTitle);
+    // Set block title
+    const starredTitle = document.createElement('div');
 
-      if (githubStarred && githubStarred.length > 0 && limit.starred > 0) {
-        let starredCount = 0;
+    starredTitle.className = 'starred__title';
+    starredContainer.appendChild(starredTitle);
 
-        // Render starred dock
-        const starredDock = document.createElement('div');
+    if (githubStarred && githubStarred.length > 0 && limit.starred > 0) {
+      let starredCount = 0;
 
-        starredDock.className = 'starred__dock';
-        starredContainer.appendChild(starredDock);
+      // Render starred dock
+      const starredDock = document.createElement('div');
 
-        for (let i = 0; i < githubStarred.length; i++) {
-          const name = githubStarred[i].full_name;
-          const url = githubStarred[i].html_url;
-          const description = githubStarred[i].description;
-          const language = githubStarred[i].language;
+      starredDock.className = 'starred__dock';
+      starredContainer.appendChild(starredDock);
 
-          if (starredCount < limit.starred) {
-            starredCount++;
+      for (let i = 0; i < githubStarred.length; i++) {
+        const name = githubStarred[i].full_name;
+        const url = githubStarred[i].html_url;
+        const description = githubStarred[i].description;
+        const language = githubStarred[i].language;
 
-            // Render starred info container
-            const starredInfo = document.createElement('div');
+        if (starredCount < limit.starred) {
+          starredCount++;
 
-            starredInfo.className = 'starred__info';
-            starredInfo.innerHTML = (`
-              <div class="starred__info-name">
-                <a href="${url}">${name}</a>
+          // Render starred info container
+          const starredInfo = document.createElement('div');
+
+          starredInfo.className = 'starred__info';
+          starredInfo.innerHTML = (`
+            <div class="starred__info-name">
+              <a href="${url}">${name}</a>
+            </div>
+          `);
+          starredDock.appendChild(starredInfo);
+
+          // Starred description
+          if (description) {
+            const starredDescription = document.createElement('div');
+
+            starredDescription.className = 'starred__info-description';
+            starredDescription.innerHTML = description;
+            starredInfo.appendChild(starredDescription);
+          }
+
+          // Starred language
+          if (language) {
+            const starredLanguage = document.createElement('div');
+
+            starredLanguage.className = 'starred__info-language';
+            starredLanguage.innerHTML = (`
+              <div class="starred__info-language-icon" style="background-color:${COLORS[language]}"></div>
+              <div class="starred__info-language-name">
+                ${language}
               </div>
             `);
-            starredDock.appendChild(starredInfo);
-
-            // Starred description
-            if (description) {
-              const starredDescription = document.createElement('div');
-
-              starredDescription.className = 'starred__info-description';
-              starredDescription.innerHTML = description;
-              starredInfo.appendChild(starredDescription);
-            }
-
-            // Starred language
-            if (language) {
-              const starredLanguage = document.createElement('div');
-
-              starredLanguage.className = 'starred__info-language';
-              starredLanguage.innerHTML = (`
-                <div class="starred__info-language-icon" style="background-color:${COLORS[language]}"></div>
-                <div class="starred__info-language-name">
-                  ${language}
-                </div>
-              `);
-              starredInfo.appendChild(starredLanguage);
-            }
+            starredInfo.appendChild(starredLanguage);
           }
         }
-
-        // View all link
-        const starredViewAll = document.createElement('div');
-
-        starredViewAll.className = 'starred__view-all';
-        starredViewAll.innerHTML = `<a href="https://github.com/${this.author}?tab=stars">View all starred projects</a>`;
-        starredDock.appendChild(starredViewAll);
-        starredTitle.innerHTML = 'Starred';
-
-        // Render starred counter
-        if (this.options.counters.starred) {
-          const cnt = document.createElement('div');
-
-          cnt.className = 'starred__title-counter';
-          cnt.innerHTML = starredCount.toString();
-          starredTitle.appendChild(cnt);
-        }
-      } else {
-        starredContainer.appendChild(document.createTextNode('No starred repos found.'));
       }
+
+      // View all link
+      const starredViewAll = document.createElement('div');
+
+      starredViewAll.className = 'starred__view-all';
+      starredViewAll.innerHTML = `<a href="https://github.com/${this.author}?tab=stars">View all starred projects</a>`;
+      starredDock.appendChild(starredViewAll);
+      starredTitle.innerHTML = 'Starred';
+
+      // Render starred counter
+      if (this.options.counters.starred) {
+        const cnt = document.createElement('div');
+
+        cnt.className = 'starred__title-counter';
+        cnt.innerHTML = starredCount.toString();
+        starredTitle.appendChild(cnt);
+      }
+    } else {
+      starredContainer.appendChild(document.createTextNode('No starred repos found.'));
     }
-  };
+  }
 
   renderCopyright(githubAuthor) {
-    if (this.options.disabled.copyright) {
+    const { disabled } = this.options;
+
+    if (disabled.copyright) {
       return;
     }
 
@@ -646,7 +657,7 @@ class GitHubPortfolio {
     copyrightContainer.innerHTML = `Copyright © ${(new Date()).getFullYear()} ${githubAuthor.name} & GitHub, Inc.`;
 
     this.rootContainer.appendChild(copyrightContainer);
-  };
+  }
 
   setEventHandlers() {
     window.addEventListener('scroll', () => {
@@ -663,7 +674,9 @@ class GitHubPortfolio {
         authorContainer.style.height = `calc(130px - ${top}px)`;
         authorAvatar.style.width = `calc(130px - ${top}px)`;
         authorAvatar.style.height = `calc(130px - ${top}px)`;
+
         const scale = (100 - (top <= 30 ? top : 30)) / 100;
+
         authorInfoDock.style.transform = `scale(${scale})`;
       }
     });
@@ -720,9 +733,9 @@ class GitHubPortfolio {
     proc = proc.replace(/(^|[\n]{2})(?!<)(.*)/gui, '<p>$2</p>');
 
     return proc;
-  };
+  }
 }
 
 window.onload = () => {
-  new GitHubPortfolio();
+  new GitHubPortfolio('arfeo');
 };
