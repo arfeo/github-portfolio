@@ -526,12 +526,22 @@ class GitHubPortfolio {
   }
 
   async openProjectReadmeModal(repoName) {
+    const isLayerContainer = document.querySelectorAll('.layer-container').length;
+
+    if (isLayerContainer) {
+      return;
+    }
+
     const layerContainer = document.createElement('div');
+
+    layerContainer.className = 'layer-container';
+    document.body.appendChild(layerContainer);
+    document.body.style.overflow = 'hidden';
+
     const readme = await this.apiData(
       `https://raw.githubusercontent.com/${this.author}/${repoName}/master/README.md`,
     ).catch(() => 'No description provided.');
 
-    layerContainer.className = 'layer-container';
     layerContainer.innerHTML = (`
       <div class="layer-backdrop"></div>
       <div class="layer-modal">
@@ -539,9 +549,6 @@ class GitHubPortfolio {
         <div class="layer-body">${GitHubPortfolio.markdownProcessing(readme)}</div>
       </div>
     `);
-
-    document.body.appendChild(layerContainer);
-    document.body.style.overflow = 'hidden';
 
     const keyDownHandler = (event) => {
       if (event.key === 'Escape') {
