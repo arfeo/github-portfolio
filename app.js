@@ -759,5 +759,5 @@ class GitHubPortfolio {
 }
 
 window.onload = () => {
-  new GitHubPortfolio('arfeo');
+  new GitHubPortfolio();
 };
