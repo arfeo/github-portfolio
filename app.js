@@ -332,14 +332,14 @@ class GitHubPortfolio {
     authorContainer.className = 'author';
     authorContainer.innerHTML = (`
       <div class="author__avatar-dock">
-        <img src="${githubAuthor.avatar_url}" class="author__avatar" alt="" />
+        <img src="${githubAuthor['avatar_url']}" class="author__avatar" alt="" />
       </div>
       <div class="author__info-dock">
         <div class="author__name">
           ${githubAuthor.name}
         </div>
         <div class="author__url">
-          <a href="${githubAuthor.html_url}">${githubAuthor.html_url}</a>
+          <a href="${githubAuthor['html_url']}">${githubAuthor['html_url']}</a>
         </div>
       </div>
     `);
@@ -349,7 +349,7 @@ class GitHubPortfolio {
     // Set page title
     const pageTitle = document.getElementsByTagName('title');
 
-    pageTitle[0].innerHTML = `${githubAuthor.name} (${githubAuthor.login})`;
+    pageTitle[0].innerHTML = `${githubAuthor.name} (${githubAuthor['login']})`;
     document.body.style.paddingTop = '180px';
   }
 
@@ -407,7 +407,7 @@ class GitHubPortfolio {
 
       for (let i = 0; i < githubRepos.length; i++) {
         const name = githubRepos[i].name;
-        const url = githubRepos[i].html_url;
+        const url = githubRepos[i]['html_url'];
         const description = githubRepos[i].description;
         const language = githubRepos[i].language;
 
@@ -421,7 +421,7 @@ class GitHubPortfolio {
           repoInfo.innerHTML = (`
             <div class="projects__info-name">
               <a href="${url}">${name}</a>
-              ${githubRepos[i].archived ? '<div class="projects__info-archived">Archived</div>' : ''}
+              ${githubRepos[i]['archived'] ? '<div class="projects__info-archived">Archived</div>' : ''}
             </div>
           `);
           reposDock.appendChild(repoInfo);
@@ -597,8 +597,8 @@ class GitHubPortfolio {
       starredContainer.appendChild(starredDock);
 
       for (let i = 0; i < githubStarred.length; i++) {
-        const name = githubStarred[i].full_name;
-        const url = githubStarred[i].html_url;
+        const name = githubStarred[i]['full_name'];
+        const url = githubStarred[i]['html_url'];
         const description = githubStarred[i].description;
         const language = githubStarred[i].language;
 
