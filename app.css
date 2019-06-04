@@ -288,11 +288,24 @@ a:hover {
   justify-content: space-between;
   width: calc(100% - 30px);
   margin-top: 15px;
+  font-size: 12px;
 }
 
 .projects__info-language {
   display: flex;
   align-items: center;
+}
+
+.projects__info-stars,
+.projects__info-forks {
+  display: flex;
+  align-items: center;
+  margin: 0 0 0 10px;
+}
+
+.projects__info-stars > svg,
+.projects__info-forks > svg {
+  margin-right: 5px;
 }
 
 .projects__info-language-icon,
@@ -306,10 +319,16 @@ a:hover {
 
 .projects__info-language-name,
 .starred__info-language-name,
+.projects__info-stars,
+.projects__info-forks,
 .projects__info-readme {
   position: relative;
   top: 1px;
-  font-size: 12px;
+}
+
+.projects__info-readme {
+  flex-grow: 1;
+  text-align: right;
 }
 
 .starred__dock {
