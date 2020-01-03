@@ -274,7 +274,7 @@ class GitHubPortfolio {
       const xhr = new XMLHttpRequest();
 
       xhr.overrideMimeType('application/json');
-      xhr.open('GET', `${url}?${params}`, true);
+      xhr.open('GET', `${url}${params ? '?' + params : ''}`, true);
 
       xhr.onload = function () {
         if (this.readyState === 4) {
