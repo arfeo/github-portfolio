@@ -405,6 +405,11 @@ class GitHubPortfolio {
       reposLanguages.className = 'projects__languages';
       reposDock.appendChild(reposLanguages);
 
+      const reposContainer = document.createElement('div');
+
+      reposContainer.className = 'projects__container';
+      reposDock.appendChild(reposContainer);
+
       for (let i = 0; i < githubRepos.length; i++) {
         const name = githubRepos[i]['name'];
         const url = githubRepos[i]['html_url'];
@@ -426,7 +431,7 @@ class GitHubPortfolio {
               ${githubRepos[i]['archived'] ? '<div class="projects__info-archived">Archived</div>' : ''}
             </div>
           `);
-          reposDock.appendChild(repoInfo);
+          reposContainer.appendChild(repoInfo);
 
           // Repo description
           if (description) {
